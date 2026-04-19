@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     AOS.init({
         duration: 1000,
         once: false,
+        mirror: true,
         offset: 100,
         easing: 'ease-out-cubic'
     });
