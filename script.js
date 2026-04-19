@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ── INTRO OVERLAY ──
+    const introOverlay = document.getElementById('intro-overlay');
+    if (introOverlay) {
+        // Hide intro after 2.2s (animations finish around 1.7s)
+        setTimeout(() => {
+            introOverlay.classList.add('hidden');
+            // Remove from DOM after fade-out
+            setTimeout(() => introOverlay.remove(), 800);
+        }, 2200);
+    }
+
     // Smooth scrolling for navigation links
     const navLinks = document.querySelectorAll('a[href^="#"]');
     
