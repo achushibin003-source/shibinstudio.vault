@@ -91,4 +91,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize snow effect
     createSnowflakes();
+
+    // Hero section fade out on scroll
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        window.addEventListener('scroll', () => {
+            // Calculate opacity: 1 at the top, 0 after scrolling down 600px
+            const scrollPos = window.scrollY;
+            const fadePoint = 600; 
+            let newOpacity = 1 - (scrollPos / fadePoint);
+            
+            // Clamp value between 0 and 1
+            if (newOpacity < 0) newOpacity = 0;
+            if (newOpacity > 1) newOpacity = 1;
+            
+            heroSection.style.opacity = newOpacity;
+        });
+    }
 });
