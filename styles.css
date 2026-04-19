@@ -52,14 +52,14 @@ h1, h2, h3, h4 {
 
 .italic {
     font-style: normal;
-    font-family: var(--font-sans);
-    color: var(--gray);
-    font-weight: 400;
-    font-size: 0.35em;
+    font-family: var(--font-fancy-light);
+    color: var(--text-main);
+    font-weight: 300;
+    font-size: 0.25em;
     display: block;
     white-space: nowrap;
     margin-top: 0.2em;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.05em;
 }
 
 .section-title {
