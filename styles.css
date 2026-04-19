@@ -210,10 +210,14 @@ h1, h2, h3, h4 {
 
 /* Header */
 .header {
+    position: absolute;
+    top: 3rem;
+    right: 5vw;
+    z-index: 100;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
-    padding-bottom: 2rem;
+    animation: fadeUpHero 1s ease 2.5s both;
 }
 
 .logo {
