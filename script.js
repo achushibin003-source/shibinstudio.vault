@@ -8,6 +8,106 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
+    // ── SCROLL-DRIVEN CANVAS HERO ──
+    const canvas  = document.getElementById('hero-canvas');
+    const wrapper = document.getElementById('hero-scroll-wrapper');
+
+    if (canvas && wrapper) {
+        const ctx = canvas.getContext('2d');
+        const TOTAL_FRAMES = 300;
+        const IMG_DIR      = 'anime/image/';
+
+        // Resize canvas to viewport
+        function resizeCanvas() {
+            canvas.width  = window.innerWidth;
+            canvas.height = window.innerHeight;
+            if (currentImg) drawFrame(currentImg);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Pre-load all frames
+        const frames = [];
+        let loadedCount = 0;
+        let currentImg  = null;
+
+        function pad(n) { return String(n).padStart(4, '0'); }
+
+        function drawFrame(img) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Cover-fill the canvas
+            const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
+            const w = img.naturalWidth  * scale;
+            const h = img.naturalHeight * scale;
+            const x = (canvas.width  - w) / 2;
+            const y = (canvas.height - h) / 2;
+            ctx.drawImage(img, x, y, w, h);
+        }
+
+        function onAllLoaded() {
+            currentImg = frames[0];
+            drawFrame(currentImg);
+            // Show UI elements
+            document.querySelector('.hero-socials-fixed')?.classList.add('visible');
+            document.querySelector('.hero-scroll-hint')?.classList.add('visible');
+            updateScroll();
+        }
+
+        // Load frames 1-300 (male0001 … male0300)
+        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+            const img = new Image();
+            img.src = IMG_DIR + 'male' + pad(i) + '.png';
+            img.onload = () => {
+                loadedCount++;
+                if (loadedCount === TOTAL_FRAMES) onAllLoaded();
+            };
+            img.onerror = () => { loadedCount++; if (loadedCount === TOTAL_FRAMES) onAllLoaded(); };
+            frames[i - 1] = img;
+        }
+
+        // Text overlay panels: [startProgress, endProgress]
+        const textPanels = [
+            { el: document.getElementById('htxt-1'), from: 0,    to: 0.35 },
+            { el: document.getElementById('htxt-2'), from: 0.35, to: 0.68 },
+            { el: document.getElementById('htxt-3'), from: 0.68, to: 1.0  },
+        ];
+
+        function updateScroll() {
+            const wrapRect   = wrapper.getBoundingClientRect();
+            const wrapHeight = wrapper.offsetHeight - window.innerHeight;
+            const scrolled   = Math.max(0, -wrapRect.top);
+            const progress   = Math.min(1, scrolled / wrapHeight);
+
+            // Draw correct frame
+            const frameIndex = Math.min(TOTAL_FRAMES - 1, Math.floor(progress * (TOTAL_FRAMES - 1)));
+            if (frames[frameIndex]?.complete && frames[frameIndex].naturalWidth) {
+                currentImg = frames[frameIndex];
+                drawFrame(currentImg);
+            }
+
+            // Show/hide text overlays
+            textPanels.forEach(({ el, from, to }) => {
+                if (!el) return;
+                if (progress >= from && progress < to) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            // Hide scroll hint and socials after user starts scrolling
+            const scrollHint  = document.querySelector('.hero-scroll-hint');
+            const socialsFixed = document.querySelector('.hero-socials-fixed');
+            if (progress > 0.05) {
+                scrollHint?.classList.remove('visible');
+            } else {
+                scrollHint?.classList.add('visible');
+            }
+        }
+
+        window.addEventListener('scroll', updateScroll, { passive: true });
+    }
+
     // Smooth scrolling for navigation links
     const navLinks = document.querySelectorAll('a[href^="#"]');
     
