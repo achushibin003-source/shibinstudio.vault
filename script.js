@@ -1,77 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ── 3D CINEMATIC INTRO ──
+    // ── INTRO ──
     const introOverlay = document.getElementById('intro-overlay');
-    const canvas = document.getElementById('intro-canvas');
-
-    if (introOverlay && canvas && typeof THREE !== 'undefined') {
-        // Three.js particle field
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 5;
-
-        // Create particles
-        const geometry = new THREE.BufferGeometry();
-        const count = 3000;
-        const positions = new Float32Array(count * 3);
-        const colors = new Float32Array(count * 3);
-
-        for (let i = 0; i < count * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 20;
-            colors[i] = i % 3 === 0 ? 0.23 + Math.random() * 0.3 : i % 3 === 1 ? 0.51 + Math.random() * 0.2 : 0.97;
-        }
-
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const material = new THREE.PointsMaterial({
-            size: 0.04,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.8
-        });
-
-        const particles = new THREE.Points(geometry, material);
-        scene.add(particles);
-
-        let animId;
-        const animate = () => {
-            animId = requestAnimationFrame(animate);
-            particles.rotation.x += 0.0003;
-            particles.rotation.y += 0.0008;
-            renderer.render(scene, camera);
-        };
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // Stagger letter animations
-        const letters = document.querySelectorAll('.intro-letter');
-        letters.forEach((letter, i) => {
-            letter.style.animationDelay = `${0.5 + i * 0.12}s`;
-        });
-
-        // Dismiss intro after 3.5s
+    if (introOverlay) {
         setTimeout(() => {
             introOverlay.classList.add('hidden');
-            setTimeout(() => {
-                cancelAnimationFrame(animId);
-                renderer.dispose();
-                introOverlay.remove();
-            }, 1000);
-        }, 3500);
-    } else if (introOverlay) {
-        // Fallback: no Three.js
-        setTimeout(() => {
-            introOverlay.classList.add('hidden');
-            setTimeout(() => introOverlay.remove(), 800);
+            setTimeout(() => introOverlay.remove(), 1200);
         }, 3000);
     }
 
