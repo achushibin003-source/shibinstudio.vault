@@ -51,12 +51,15 @@ h1, h2, h3, h4 {
 }
 
 .italic {
-    font-style: italic;
+    font-style: normal;
     font-family: var(--font-sans);
-    color: var(--text-main);
-    font-weight: 500;
-    font-size: 0.5em;
-    opacity: 0.9;
+    color: var(--gray);
+    font-weight: 400;
+    font-size: 0.35em;
+    display: block;
+    white-space: nowrap;
+    margin-top: 0.2em;
+    letter-spacing: 0.02em;
 }
 
 .section-title {
