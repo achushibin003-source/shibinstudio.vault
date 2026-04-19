@@ -52,9 +52,9 @@ h1, h2, h3, h4 {
 
 .italic {
     font-style: italic;
-    font-family: var(--font-fancy);
+    font-family: var(--font-sans);
     color: var(--text-main);
-    font-weight: 700;
+    font-weight: 500;
     font-size: 0.5em;
     opacity: 0.9;
 }
