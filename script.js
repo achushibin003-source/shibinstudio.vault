@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (canvas && wrapper) {
         const ctx = canvas.getContext('2d');
         const TOTAL_FRAMES = 300;
-        const IMG_DIR      = 'anime/image/';
+        const IMG_DIR      = 'anime/images/';
 
         // Resize canvas to viewport
         function resizeCanvas() {
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function pad(n) { return String(n).padStart(4, '0'); }
 
         function drawFrame(img) {
+            if (!img || !img.naturalWidth) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             // Cover-fill the canvas
             const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
