@@ -325,7 +325,7 @@ h1, h2, h3, h4 {
 /* Social icons (inline) */
 .hero-socials-inline {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1.5rem;
     z-index: 20;
     margin-bottom: 1.2rem;
@@ -620,6 +620,10 @@ h1, h2, h3, h4 {
         flex-direction: column;
         text-align: center;
         gap: 2rem;
+    }
+    
+    .hero-socials-inline {
+        justify-content: center;
     }
     
     .hero-info {
