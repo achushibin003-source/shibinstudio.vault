@@ -282,23 +282,25 @@ h1, h2, h3, h4 {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.hot-label {
-    font-family: var(--font-sans);
-    font-size: 0.7rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--accent-blue);
-    margin-bottom: 1rem;
-}
-
 .hot-title {
-    font-family: var(--font-sans);
-    font-size: clamp(4rem, 12vw, 10rem);
-    font-weight: 800;
+    font-family: var(--font-fancy);
+    font-size: clamp(6rem, 16vw, 12rem);
+    font-weight: 700;
     line-height: 1;
     color: #fff;
-    text-shadow: 0 2px 40px rgba(0,0,0,0.8);
-    letter-spacing: -0.04em;
+    text-shadow: 0 0 10px rgba(255,255,255,0.6), 0 0 20px rgba(59, 130, 246, 0.5), 0 0 30px rgba(59, 130, 246, 0.3);
+    letter-spacing: 0.05em;
+    animation: textGlow 2.5s ease-in-out infinite alternate;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes textGlow {
+    from {
+        text-shadow: 0 0 10px rgba(255,255,255,0.6), 0 0 20px rgba(59, 130, 246, 0.5), 0 0 30px rgba(59, 130, 246, 0.3);
+    }
+    to {
+        text-shadow: 0 0 15px rgba(255,255,255,0.9), 0 0 30px rgba(59, 130, 246, 0.8), 0 0 45px rgba(59, 130, 246, 0.6);
+    }
 }
 
 .hot-subtitle {
@@ -320,64 +322,23 @@ h1, h2, h3, h4 {
     text-transform: uppercase;
 }
 
-/* Social icons (left side) */
-.hero-socials-fixed {
-    position: absolute;
-    bottom: 3rem;
-    right: 2.5rem;
+/* Social icons (inline) */
+.hero-socials-inline {
     display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+    justify-content: center;
+    gap: 1.5rem;
     z-index: 20;
-    opacity: 0;
-    transition: opacity 0.5s ease 0.5s;
-    animation: fadeUpHero 1s ease 3s forwards;
+    margin-bottom: 1.5rem;
 }
 
-.hero-socials-fixed a {
-    color: rgba(255,255,255,0.5);
+.hero-socials-inline a {
+    color: rgba(255,255,255,0.7);
     transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.hero-socials-fixed a:hover {
+.hero-socials-inline a:hover {
     color: var(--accent-blue);
-    transform: translateX(-3px);
-}
-
-/* Scroll hint */
-.hero-scroll-hint {
-    position: absolute;
-    bottom: 2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    z-index: 20;
-    opacity: 0;
-    transition: opacity 0.5s ease 0.5s;
-    animation: fadeUpHero 1s ease 3s forwards;
-}
-
-.hero-scroll-hint span {
-    font-family: var(--font-sans);
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-}
-
-.scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, var(--accent-blue), transparent);
-    animation: scrollPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; transform: scaleY(1); }
-    50%       { opacity: 1;   transform: scaleY(1.2); }
+    transform: translateY(-3px);
 }
 
 /* About Section */
