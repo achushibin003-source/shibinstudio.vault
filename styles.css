@@ -283,13 +283,13 @@ h1, h2, h3, h4 {
 }
 
 .hot-title {
-    font-family: var(--font-fancy);
-    font-size: clamp(6rem, 16vw, 12rem);
-    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 800;
     line-height: 1;
     color: #fff;
     text-shadow: 0 0 10px rgba(255,255,255,0.6), 0 0 20px rgba(59, 130, 246, 0.5), 0 0 30px rgba(59, 130, 246, 0.3);
-    letter-spacing: 0.05em;
+    letter-spacing: -0.04em;
     animation: textGlow 2.5s ease-in-out infinite alternate;
     margin-bottom: 0.5rem;
 }
