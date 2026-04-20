@@ -292,27 +292,32 @@ h1, h2, h3, h4 {
 }
 
 .hot-title {
-    font-family: var(--font-serif);
-    font-size: clamp(3rem, 9vw, 8rem);
-    font-weight: 600;
-    line-height: 0.95;
+    font-family: var(--font-sans);
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 800;
+    line-height: 1;
     color: #fff;
     text-shadow: 0 2px 40px rgba(0,0,0,0.8);
+    letter-spacing: -0.04em;
 }
 
-.hot-title em {
-    font-style: italic;
+.hot-subtitle {
+    font-family: var(--font-fancy-light);
+    font-size: clamp(2.5rem, 6vw, 4rem);
     color: var(--accent-blue);
-    -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px var(--accent-blue);
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
 }
 
 .hot-sub {
     font-family: var(--font-sans);
-    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    font-size: clamp(0.75rem, 1.2vw, 0.9rem);
     color: rgba(255,255,255,0.6);
-    margin-top: 1.5rem;
-    letter-spacing: 0.05em;
+    margin-top: 1rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
 }
 
 /* Social icons (left side) */
