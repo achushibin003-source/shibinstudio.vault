@@ -283,7 +283,7 @@ h1, h2, h3, h4 {
 }
 
 .hot-title {
-    font-family: var(--font-sans);
+    font-family: var(--font-fancy);
     font-size: clamp(5rem, 15vw, 12rem);
     font-weight: 800;
     line-height: 1;
