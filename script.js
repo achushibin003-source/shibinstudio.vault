@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const total        = carouselPhotos.length;
     const angleStep    = 360 / total;
     // Push cards far enough apart so they don't overlap
-    const radius       = Math.round((220 / 2) / Math.tan(Math.PI / total)) + 80;
+    const radius       = Math.round((160 / 2) / Math.tan(Math.PI / total)) + 60;
 
     let currentAngle   = 0;   // degrees, rotation around Y
     let targetAngle    = 0;
