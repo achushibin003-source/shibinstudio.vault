@@ -38,6 +38,7 @@
             <a href="#skills">Skills</a>
             <a href="#services">Services</a>
             <a href="#projects">Projects</a>
+            <a href="#gallery">Gallery</a>
             <a href="#contact">Contact</a>
         </nav>
     </header>
@@ -154,7 +155,45 @@
 
             <hr class="divider">
 
-            <!-- CONTACT -->
+            <!-- 3D WORK GALLERY SECTION -->
+            <section id="gallery" class="gallery-section" data-aos="fade-up">
+                <h2 class="section-title">Work Gallery</h2>
+                <p class="gallery-hint">Hover the feature photo &middot; Scroll to spin the carousel</p>
+
+                <!-- STAGE: Central + Side reveal on hover -->
+                <div class="gallery-stage" id="galleryStage">
+                    <div class="gallery-side-photo left" id="sideLeft">
+                        <img src="work/IMG-20260513-WA0003.jpg" alt="Work photo">
+                        <div class="photo-shine"></div>
+                    </div>
+                    <div class="gallery-center-photo" id="centerPhoto">
+                        <img src="work/IMG-20260511-WA0001.jpg" alt="Featured Work">
+                        <div class="photo-shine"></div>
+                        <div class="gallery-center-label">Hover to Explore</div>
+                    </div>
+                    <div class="gallery-side-photo right" id="sideRight">
+                        <img src="work/IMG-20260519-WA0001.jpg" alt="Work photo">
+                        <div class="photo-shine"></div>
+                    </div>
+                </div>
+
+                <!-- 3D CAROUSEL -->
+                <div class="carousel-hint" id="carouselHint">&#8595; Scroll inside carousel to spin</div>
+                <div class="carousel-wrapper" id="carouselWrapper">
+                    <div class="carousel-scene" id="carouselScene">
+                        <!-- Cards injected by JS -->
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn" id="prevBtn" aria-label="Previous">&#8592;</button>
+                        <span class="carousel-counter" id="carouselCounter">1 / 25</span>
+                        <button class="carousel-btn" id="nextBtn" aria-label="Next">&#8594;</button>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+
             <section id="contact" class="contact" data-aos="fade-up">
                 <div class="contact-grid">
                     <h2 class="section-title">Let's create something together.</h2>

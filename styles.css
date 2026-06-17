@@ -752,3 +752,354 @@ h1, h2, h3, h4 {
         opacity: 0;
     }
 }
+
+/* ═══════════════════════════════════════════════
+   3D WORK GALLERY SECTION
+═══════════════════════════════════════════════ */
+.gallery-section {
+    padding: 8rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-hint {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    color: var(--gray);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+}
+
+/* ── FEATURE STAGE ── */
+.gallery-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 500px;
+    perspective: 1200px;
+    margin-bottom: 3rem;
+}
+
+/* CENTER PHOTO */
+.gallery-center-photo {
+    position: relative;
+    width: 320px;
+    height: 420px;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow:
+        0 0 0 1px rgba(59,130,246,0.25),
+        0 30px 80px rgba(0,0,0,0.8),
+        0 0 60px rgba(59,130,246,0.15);
+    transform: scale(1) rotateY(0deg);
+    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1),
+                box-shadow 0.6s ease;
+    transform-style: preserve-3d;
+}
+
+.gallery-center-photo:hover {
+    transform: scale(1.04) rotateY(-5deg);
+    box-shadow:
+        0 0 0 1px rgba(59,130,246,0.6),
+        0 40px 100px rgba(0,0,0,0.9),
+        0 0 80px rgba(59,130,246,0.35);
+}
+
+.gallery-center-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.23,1,0.32,1);
+}
+
+.gallery-center-photo:hover img {
+    transform: scale(1.08);
+}
+
+.gallery-center-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem 1rem 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    transition: opacity 0.4s ease;
+}
+
+.gallery-stage:hover .gallery-center-label {
+    opacity: 0;
+}
+
+/* Shine overlay */
+.photo-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.12) 0%,
+        transparent 50%,
+        rgba(255,255,255,0.04) 100%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+    transition: opacity 0.4s ease;
+}
+
+/* SIDE PHOTOS */
+.gallery-side-photo {
+    position: absolute;
+    width: 240px;
+    height: 340px;
+    border-radius: 14px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.7s cubic-bezier(0.23,1,0.32,1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(59,130,246,0.1);
+    transform-style: preserve-3d;
+}
+
+.gallery-side-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-side-photo.left {
+    transform: translateX(0px) scale(0.8) rotateY(25deg);
+    left: calc(50% - 160px - 240px);
+    filter: brightness(0.5) blur(2px);
+}
+
+.gallery-side-photo.right {
+    transform: translateX(0px) scale(0.8) rotateY(-25deg);
+    right: calc(50% - 160px - 240px);
+    filter: brightness(0.5) blur(2px);
+}
+
+/* Revealed state on stage hover */
+.gallery-stage:hover .gallery-side-photo {
+    opacity: 1;
+    pointer-events: auto;
+    filter: brightness(0.75) blur(0px);
+}
+
+.gallery-stage:hover .gallery-side-photo.left {
+    transform: translateX(-60px) scale(0.92) rotateY(18deg);
+}
+
+.gallery-stage:hover .gallery-side-photo.right {
+    transform: translateX(60px) scale(0.92) rotateY(-18deg);
+}
+
+.gallery-side-photo:hover {
+    filter: brightness(1) !important;
+    transform: translateX(-60px) scale(0.97) rotateY(10deg) !important;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.9), 0 0 50px rgba(59,130,246,0.3) !important;
+    z-index: 20;
+}
+
+.gallery-side-photo.right:hover {
+    transform: translateX(60px) scale(0.97) rotateY(-10deg) !important;
+}
+
+/* ── 3D CAROUSEL ── */
+.carousel-hint {
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    color: rgba(59,130,246,0.7);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: floatHint 2s ease-in-out infinite;
+}
+
+@keyframes floatHint {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+    height: 460px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+    margin: 0 auto;
+}
+
+.carousel-scene {
+    position: relative;
+    width: 220px;
+    height: 300px;
+    transform-style: preserve-3d;
+    transition: transform 0.9s cubic-bezier(0.23,1,0.32,1);
+    cursor: grab;
+}
+
+.carousel-scene:active {
+    cursor: grabbing;
+}
+
+/* Individual carousel card */
+.carousel-card {
+    position: absolute;
+    width: 220px;
+    height: 300px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(59,130,246,0.15);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+    backface-visibility: hidden;
+}
+
+.carousel-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.carousel-card:hover img {
+    transform: scale(1.08);
+}
+
+.carousel-card-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem 1rem 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+}
+
+/* Active / front card highlight */
+.carousel-card.is-active {
+    border-color: rgba(59,130,246,0.55);
+    box-shadow: 0 0 0 1px rgba(59,130,246,0.4),
+                0 20px 70px rgba(0,0,0,0.8),
+                0 0 50px rgba(59,130,246,0.25);
+}
+
+/* Controls */
+.carousel-controls {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    z-index: 20;
+    position: relative;
+}
+
+.carousel-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(59,130,246,0.4);
+    background: rgba(59,130,246,0.08);
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+
+.carousel-btn:hover {
+    background: rgba(59,130,246,0.25);
+    border-color: rgba(59,130,246,0.8);
+    box-shadow: 0 0 20px rgba(59,130,246,0.35);
+    transform: scale(1.1);
+}
+
+.carousel-counter {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--gray);
+    letter-spacing: 0.1em;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Drag to rotate track */
+.carousel-drag-area {
+    position: absolute;
+    inset: -40px;
+    z-index: 5;
+    cursor: grab;
+}
+
+/* Responsive gallery */
+@media (max-width: 900px) {
+    .gallery-stage {
+        height: 420px;
+    }
+    .gallery-center-photo {
+        width: 250px;
+        height: 340px;
+    }
+    .gallery-side-photo {
+        width: 180px;
+        height: 250px;
+    }
+    .gallery-side-photo.left {
+        left: calc(50% - 125px - 180px);
+    }
+    .gallery-side-photo.right {
+        right: calc(50% - 125px - 180px);
+    }
+}
+
+@media (max-width: 600px) {
+    .gallery-stage {
+        height: 360px;
+    }
+    .gallery-center-photo {
+        width: 200px;
+        height: 280px;
+    }
+    .gallery-side-photo {
+        width: 130px;
+        height: 190px;
+    }
+    .gallery-side-photo.left {
+        left: 2px;
+    }
+    .gallery-side-photo.right {
+        right: 2px;
+    }
+    .gallery-stage:hover .gallery-side-photo.left {
+        transform: translateX(0) scale(0.88) rotateY(15deg);
+    }
+    .gallery-stage:hover .gallery-side-photo.right {
+        transform: translateX(0) scale(0.88) rotateY(-15deg);
+    }
+}
+

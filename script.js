@@ -119,4 +119,250 @@ document.addEventListener('DOMContentLoaded', () => {
             heroSection.style.opacity = newOpacity;
         });
     }
+
+    // ═══════════════════════════════════════════════
+    //  3D WORK GALLERY CAROUSEL
+    // ═══════════════════════════════════════════════
+
+    // All 28 work photos (excluding the 3 used in the stage)
+    const carouselPhotos = [
+        { src: 'work/IMG-20260512-WA0004.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260512-WA0006.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260513-WA0004.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260513-WA0005.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260515-WA0003.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260520-WA0001.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260520-WA0003.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260522-WA0019.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260522-WA0022.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260529-WA0002.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260529-WA0003.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260529-WA0004.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260529-WA0005.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260530-WA0007.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260606-WA0003.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260608-WA0000.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260608-WA0001.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260608-WA0002.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260608-WA0003.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260609-WA0005.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260611-WA0008.jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260617-WA0004 (1).jpg', label: 'Work · 2026' },
+        { src: 'work/IMG-20260617-WA0005 (1).jpg', label: 'Work · 2026' },
+        { src: 'work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg', label: 'Work · 2026' },
+        { src: 'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg', label: 'Work · 2026' },
+    ];
+
+    const scene        = document.getElementById('carouselScene');
+    const counterEl    = document.getElementById('carouselCounter');
+    const prevBtn      = document.getElementById('prevBtn');
+    const nextBtn      = document.getElementById('nextBtn');
+
+    if (!scene) return; // guard if section not present
+
+    const total        = carouselPhotos.length;
+    const angleStep    = 360 / total;
+    // Push cards far enough apart so they don't overlap
+    const radius       = Math.round((220 / 2) / Math.tan(Math.PI / total)) + 80;
+
+    let currentAngle   = 0;   // degrees, rotation around Y
+    let targetAngle    = 0;
+    let currentIndex   = 0;
+    let isAnimating    = false;
+
+    // Build cards
+    carouselPhotos.forEach((photo, i) => {
+        const card = document.createElement('div');
+        card.classList.add('carousel-card');
+        if (i === 0) card.classList.add('is-active');
+
+        const img = document.createElement('img');
+        img.src   = photo.src;
+        img.alt   = photo.label;
+        img.loading = 'lazy';
+
+        const label = document.createElement('div');
+        label.classList.add('carousel-card-label');
+        label.textContent = photo.label;
+
+        card.appendChild(img);
+        card.appendChild(label);
+        scene.appendChild(card);
+
+        // Click any card → rotate to it
+        card.addEventListener('click', () => {
+            goToIndex(i);
+        });
+
+        // Place in 3D ring
+        const cardAngle = i * angleStep;
+        card.style.transform = `rotateY(${cardAngle}deg) translateZ(${radius}px)`;
+    });
+
+    function getCards() {
+        return scene.querySelectorAll('.carousel-card');
+    }
+
+    function updateActiveCard() {
+        const cards = getCards();
+        cards.forEach((c, i) => c.classList.toggle('is-active', i === currentIndex));
+    }
+
+    function applyRotation(smooth = true) {
+        scene.style.transition = smooth
+            ? 'transform 0.9s cubic-bezier(0.23,1,0.32,1)'
+            : 'none';
+        scene.style.transform = `rotateY(${-currentAngle}deg)`;
+        updateActiveCard();
+        if (counterEl) counterEl.textContent = `${currentIndex + 1} / ${total}`;
+    }
+
+    function goToIndex(idx) {
+        currentIndex = ((idx % total) + total) % total;
+        currentAngle = currentIndex * angleStep;
+        applyRotation(true);
+    }
+
+    // Prev / Next buttons
+    prevBtn && prevBtn.addEventListener('click', () => goToIndex(currentIndex - 1));
+    nextBtn && nextBtn.addEventListener('click', () => goToIndex(currentIndex + 1));
+
+    // Keyboard arrows when carousel is in view
+    document.addEventListener('keydown', (e) => {
+        const wrapper = document.getElementById('carouselWrapper');
+        if (!wrapper) return;
+        const rect = wrapper.getBoundingClientRect();
+        const inView = rect.top < window.innerHeight && rect.bottom > 0;
+        if (!inView) return;
+        if (e.key === 'ArrowRight') goToIndex(currentIndex + 1);
+        if (e.key === 'ArrowLeft')  goToIndex(currentIndex - 1);
+    });
+
+    // ── Scroll inside the wrapper to spin ──
+    const wrapper = document.getElementById('carouselWrapper');
+    if (wrapper) {
+        wrapper.addEventListener('wheel', (e) => {
+            const rect = wrapper.getBoundingClientRect();
+            const inView = rect.top < window.innerHeight * 0.85 && rect.bottom > window.innerHeight * 0.15;
+            if (!inView) return;
+            e.preventDefault();
+            const direction = e.deltaY > 0 ? 1 : -1;
+            goToIndex(currentIndex + direction);
+        }, { passive: false });
+    }
+
+    // ── Drag to spin ──
+    let dragStartX    = 0;
+    let dragStartAngle = 0;
+    let isDragging    = false;
+
+    scene.addEventListener('mousedown', (e) => {
+        isDragging     = true;
+        dragStartX     = e.clientX;
+        dragStartAngle = currentAngle;
+        scene.style.transition = 'none';
+        e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const delta = (e.clientX - dragStartX) * 0.4;
+        currentAngle = dragStartAngle - delta;
+        scene.style.transform = `rotateY(${-currentAngle}deg)`;
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        // Snap to nearest card
+        currentIndex = Math.round(currentAngle / angleStep);
+        currentAngle = currentIndex * angleStep;
+        currentIndex = ((currentIndex % total) + total) % total;
+        applyRotation(true);
+    });
+
+    // Touch drag support
+    let touchStartX = 0;
+    scene.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        dragStartAngle = currentAngle;
+        scene.style.transition = 'none';
+    }, { passive: true });
+
+    scene.addEventListener('touchmove', (e) => {
+        const delta = (e.touches[0].clientX - touchStartX) * 0.4;
+        currentAngle = dragStartAngle - delta;
+        scene.style.transform = `rotateY(${-currentAngle}deg)`;
+    }, { passive: true });
+
+    scene.addEventListener('touchend', () => {
+        currentIndex = Math.round(currentAngle / angleStep);
+        currentAngle = currentIndex * angleStep;
+        currentIndex = ((currentIndex % total) + total) % total;
+        applyRotation(true);
+    });
+
+    // Initial render
+    applyRotation(false);
+
+    // ── Gallery Stage 3D mouse parallax ──
+    const stage = document.getElementById('galleryStage');
+    const centerPhoto = document.getElementById('centerPhoto');
+    if (stage && centerPhoto) {
+        stage.addEventListener('mousemove', (e) => {
+            const rect   = stage.getBoundingClientRect();
+            const cx     = rect.left + rect.width  / 2;
+            const cy     = rect.top  + rect.height / 2;
+            const dx     = (e.clientX - cx) / (rect.width  / 2); // -1 to 1
+            const dy     = (e.clientY - cy) / (rect.height / 2); // -1 to 1
+            const tiltX  =  dy * -8;  // tilt up/down
+            const tiltY  =  dx *  10; // tilt left/right
+            centerPhoto.style.transform = `scale(1.04) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+        });
+
+        stage.addEventListener('mouseleave', () => {
+            centerPhoto.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+        });
+    }
+
+    // ── Auto-rotate carousel when idle ──
+    let autoRotateTimer = null;
+    let userInteracted  = false;
+
+    function startAutoRotate() {
+        if (autoRotateTimer) return;
+        autoRotateTimer = setInterval(() => {
+            if (!userInteracted) goToIndex(currentIndex + 1);
+        }, 3500);
+    }
+
+    function resetAutoRotate() {
+        userInteracted = true;
+        clearInterval(autoRotateTimer);
+        autoRotateTimer = null;
+        setTimeout(() => {
+            userInteracted = false;
+            startAutoRotate();
+        }, 6000);
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', resetAutoRotate);
+    if (nextBtn) nextBtn.addEventListener('click', resetAutoRotate);
+    scene.addEventListener('mousedown', resetAutoRotate);
+    scene.addEventListener('touchstart', resetAutoRotate, { passive: true });
+
+    // Start auto-rotate only when carousel is visible
+    const carouselObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                startAutoRotate();
+            } else {
+                clearInterval(autoRotateTimer);
+                autoRotateTimer = null;
+            }
+        });
+    }, { threshold: 0.3 });
+
+    if (wrapper) carouselObserver.observe(wrapper);
 });
+
