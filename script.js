@@ -164,9 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function getLayoutMetrics() {
         const w = window.innerWidth;
         if (w <= 768) {
-            return { cardWidth: 200, cardSpacing: 230 };
+            return { cardWidth: 200, cardSpacing: 230, cardMargin: 15 };
         }
-        return { cardWidth: 280, cardSpacing: 320 };
+        return { cardWidth: 280, cardSpacing: 320, cardMargin: 20 };
     }
 
     // -- Animation & Scroll State --
@@ -226,11 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // -- Update track translation and card states --
     function updateGalleryTrack() {
-        const { cardWidth, cardSpacing } = getLayoutMetrics();
-        const stageWidth = gravityStage.clientWidth;
+        const { cardWidth, cardSpacing, cardMargin } = getLayoutMetrics();
+        const stageWidth = gravityStage.clientWidth || window.innerWidth;
 
-        // Calculate translation to keep targetX centered
-        const tx = (stageWidth / 2) - (currentX * cardSpacing) - (cardWidth / 2);
+        // Calculate translation to keep targetX centered (assuming track starts at left: 0)
+        const tx = (stageWidth / 2) - (currentX * cardSpacing) - cardMargin - (cardWidth / 2);
         gravityTrack.style.transform = `translateX(${tx}px)`;
 
         // Identify center and flanking cards

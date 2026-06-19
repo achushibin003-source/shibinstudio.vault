@@ -838,6 +838,8 @@ h1, h2, h3, h4 {
 
 /* ── GRAVITY TRACK ── */
 .gravity-track {
+    position: absolute;
+    left: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
