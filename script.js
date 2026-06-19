@@ -120,11 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
-    //  CINEMATIC ORBIT CAROUSEL GALLERY
-    // \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+    // ===============================================
+    //  ANTI-GRAVITY HORIZONTAL GALLERY ENGINE
+    // ===============================================
 
-    const orbitPhotos = [
+    const gravityPhotos = [
         'work/IMG-20260512-WA0004.jpg',
         'work/IMG-20260512-WA0006.jpg',
         'work/IMG-20260513-WA0004.jpg',
@@ -149,235 +149,281 @@ document.addEventListener('DOMContentLoaded', () => {
         'work/IMG-20260617-WA0004 (1).jpg',
         'work/IMG-20260617-WA0005 (1).jpg',
         'work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg',
-        'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg',
+        'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg'
     ];
 
-    const orbitStage  = document.getElementById('orbitStage');
-    const orbitHero   = document.getElementById('orbitHero');
-    const orbitRing   = document.getElementById('orbitRing');
-    const orbitCount  = document.getElementById('orbitCount');
+    const gravityStage  = document.getElementById('gravityStage');
+    const gravityTrack  = document.getElementById('gravityTrack');
+    const gravityCount  = document.getElementById('gravityCount');
 
-    if (!orbitRing) return; // guard
+    if (!gravityTrack) return; // guard
 
-    const N          = orbitPhotos.length;
-    const ANGLE_STEP = 360 / N;
+    const N = gravityPhotos.length;
 
-    // \u2500\u2500 Responsive orbit radius \u2500\u2500
-    function getRadius() {
+    // -- Sizing Configuration (sync with CSS variables) --
+    function getLayoutMetrics() {
         const w = window.innerWidth;
-        if (w <= 480)  return 240;
-        if (w <= 768)  return 320;
-        if (w <= 1100) return 400;
-        return 500;
+        if (w <= 768) {
+            return { cardWidth: 200, cardSpacing: 230 };
+        }
+        return { cardWidth: 280, cardSpacing: 320 };
     }
 
-    // \u2500\u2500 Animation state \u2500\u2500
-    let currentAngle = 0;   // smoothed display angle
-    let targetAngle  = 0;   // scroll / drag target
-    let rafId        = null;
+    // -- Animation & Scroll State --
+    let currentX = 0;   // smoothed scroll index
+    let targetX  = 0;   // target scroll index
+    let rafId    = null;
 
-    // \u2500\u2500 Build orbit cards \u2500\u2500
-    function buildCards() {
-        orbitRing.innerHTML = '';
-        const R = getRadius();
-
-        orbitPhotos.forEach((src, i) => {
+    // -- Generate portfolio cards --
+    function buildGravityCards() {
+        gravityTrack.innerHTML = '';
+        gravityPhotos.forEach((src, i) => {
             const card = document.createElement('div');
-            card.className = 'orbit-card';
+            card.className = 'gravity-card';
             card.dataset.index = i;
 
-            // Static 3D position: each card on the ring at its base angle
-            const baseAngle = i * ANGLE_STEP;
-            card.style.transform = `rotateY(${baseAngle}deg) translateZ(${R}px)`;
+            const inner = document.createElement('div');
+            inner.className = 'gravity-card-inner';
+
+            const media = document.createElement('div');
+            media.className = 'gravity-card-media';
 
             const img = document.createElement('img');
-            img.src     = src;
-            img.alt     = `Work ${i + 1}`;
+            img.src = src;
+            img.alt = `Portfolio Work ${i + 1}`;
             img.loading = 'lazy';
 
             const overlay = document.createElement('div');
-            overlay.className = 'orbit-card-overlay';
+            overlay.className = 'gravity-card-overlay';
 
             const glass = document.createElement('div');
-            glass.className = 'orbit-card-glass';
+            glass.className = 'gravity-card-glass';
 
             const num = document.createElement('span');
-            num.className   = 'orbit-card-num';
+            num.className = 'gravity-card-num';
             num.textContent = String(i + 1).padStart(2, '0');
 
-            card.appendChild(img);
-            card.appendChild(overlay);
-            card.appendChild(glass);
-            card.appendChild(num);
-            orbitRing.appendChild(card);
+            media.appendChild(img);
+            inner.appendChild(media);
+            inner.appendChild(overlay);
+            inner.appendChild(glass);
+            inner.appendChild(num);
+            card.appendChild(inner);
+
+            // Click-to-center functionality
+            card.addEventListener('click', () => {
+                if (card.classList.contains('is-left') || card.classList.contains('is-right')) {
+                    targetX = i;
+                    startAnimate();
+                }
+            });
+
+            gravityTrack.appendChild(card);
         });
     }
 
-    buildCards();
+    buildGravityCards();
 
-    // \u2500\u2500 Per-frame card visual update \u2500\u2500
-    // Each card's "world angle" = its base angle + the ring's current rotation.
-    // Depth = cos(worldAngle): +1 = directly in front, -1 = directly behind.
-    function updateCards() {
-        const cards = orbitRing.querySelectorAll('.orbit-card');
-        let frontIdx   = 0;
-        let maxDepth   = -Infinity;
+    // -- Update track translation and card states --
+    function updateGalleryTrack() {
+        const { cardWidth, cardSpacing } = getLayoutMetrics();
+        const stageWidth = gravityStage.clientWidth;
 
-        cards.forEach((card, i) => {
-            const baseAngle  = i * ANGLE_STEP;
-            const worldAngle = baseAngle + currentAngle;
-            const rad        = worldAngle * Math.PI / 180;
-            const depth      = Math.cos(rad);              // -1 to +1
-            const t          = (depth + 1) / 2;            //  0 to 1
+        // Calculate translation to keep targetX centered
+        const tx = (stageWidth / 2) - (currentX * cardSpacing) - (cardWidth / 2);
+        gravityTrack.style.transform = `translateX(${tx}px)`;
 
-            // Brightness: 0.22 (back) → 1.0 (front)
-            const brightness = 0.22 + 0.78 * t;
-            // Blur: 7px (back) → 0px (front)
-            const blur = (1 - t) * 7;
-            // Z-index for correct 2D paint order
-            card.style.zIndex = Math.round(t * 100);
-            card.style.filter = `brightness(${brightness.toFixed(3)}) blur(${blur.toFixed(2)}px)`;
+        // Identify center and flanking cards
+        const centerIdx = Math.round(currentX);
+        const cards = gravityTrack.querySelectorAll('.gravity-card');
 
-            if (depth > maxDepth) { maxDepth = depth; frontIdx = i; }
+        cards.forEach((card, idx) => {
+            card.classList.remove('is-center', 'is-left', 'is-right');
+            if (idx === centerIdx) {
+                card.classList.add('is-center');
+            } else if (idx === centerIdx - 1) {
+                card.classList.add('is-left');
+            } else if (idx === centerIdx + 1) {
+                card.classList.add('is-right');
+            }
         });
 
-        // Highlight front card
-        cards.forEach((card, i) => card.classList.toggle('is-front', i === frontIdx));
-
-        // Update counter
-        if (orbitCount) {
-            orbitCount.textContent =
-                `${String(frontIdx + 1).padStart(2, '0')} / ${N}`;
+        // Update counter UI
+        if (gravityCount) {
+            const displayIdx = Math.max(0, Math.min(N - 1, centerIdx));
+            gravityCount.textContent = `${String(displayIdx + 1).padStart(2, '0')} / ${N}`;
         }
     }
 
-    // Initial visual state (orbit hidden \u2192 just call update silently)
-    updateCards();
+    // Set initial layout
+    updateGalleryTrack();
 
-    // \u2500\u2500 Smooth animation loop \u2500\u2500
+    // -- Animation Loop --
     function animate() {
-        const diff = targetAngle - currentAngle;
-
-        // Stop when close enough
-        if (Math.abs(diff) < 0.01) {
-            currentAngle = targetAngle;
-            orbitRing.style.transform = `rotateY(${currentAngle}deg)`;
-            updateCards();
+        const diff = targetX - currentX;
+        
+        // Stop the loop when difference is negligible
+        if (Math.abs(diff) < 0.001) {
+            currentX = targetX;
+            updateGalleryTrack();
             rafId = null;
             return;
         }
 
-        // Exponential ease (lerp factor 0.07 = smooth, cinematic)
-        currentAngle += diff * 0.07;
-        orbitRing.style.transform = `rotateY(${currentAngle}deg)`;
-        updateCards();
+        // Lerp for smooth fluid animation
+        currentX += diff * 0.09; // Easing coefficient (0.09 is very smooth and elegant)
+        updateGalleryTrack();
         rafId = requestAnimationFrame(animate);
     }
 
     function startAnimate() {
-        if (rafId) return;
-        rafId = requestAnimationFrame(animate);
+        if (!rafId) {
+            rafId = requestAnimationFrame(animate);
+        }
     }
 
-    // \u2500\u2500 Hover \u2192 activate / deactivate orbit \u2500\u2500
-    if (orbitStage) {
-        orbitStage.addEventListener('mouseenter', () => {
-            orbitStage.classList.add('is-active');
+    // -- Mouse interactions for hover & 3D tilt parallax --
+    if (gravityStage) {
+        gravityStage.addEventListener('mouseenter', () => {
+            gravityStage.classList.add('is-hovered');
         });
-        orbitStage.addEventListener('mouseleave', () => {
-            orbitStage.classList.remove('is-active');
-        });
-    }
 
-    // ─── Hero tilt on mouse move (always active) ───
-    if (orbitHero && orbitStage) {
-        orbitStage.addEventListener('mousemove', (e) => {
-            const rect = orbitStage.getBoundingClientRect();
-            const dx = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2);
-            const dy = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
-            orbitHero.style.transform =
-                `scale(1.04) rotateX(${dy * -9}deg) rotateY(${dx * 11}deg)`;
+        gravityStage.addEventListener('mouseleave', () => {
+            gravityStage.classList.remove('is-hovered');
+            // Reset 3D tilt on all cards
+            const inners = gravityTrack.querySelectorAll('.gravity-card-inner');
+            inners.forEach(inner => {
+                inner.style.transform = '';
+            });
         });
-        orbitStage.addEventListener('mouseleave', () => {
-            orbitHero.style.transform = '';
-        });
-    }
 
-    // \u2500\u2500 Scroll to rotate \u2500\u2500
-    if (orbitStage) {
-        orbitStage.addEventListener('wheel', (e) => {
+        gravityStage.addEventListener('mousemove', (e) => {
+            // Apply independent 3D tilt to visible cards (center, left, right)
+            const activeCards = gravityTrack.querySelectorAll('.is-center, .is-left, .is-right');
+            activeCards.forEach(card => {
+                const cardRect = card.getBoundingClientRect();
+                const cardCenterX = cardRect.left + cardRect.width / 2;
+                const cardCenterY = cardRect.top + cardRect.height / 2;
+
+                const dx = e.clientX - cardCenterX;
+                const dy = e.clientY - cardCenterY;
+
+                // Relative mouse offset percent (-1 to 1)
+                const percentX = dx / (cardRect.width / 2);
+                const percentY = dy / (cardRect.height / 2);
+
+                // Elegant maximum tilt bounds
+                const tiltX = percentY * -8;
+                const tiltY = percentX * 10;
+
+                const inner = card.querySelector('.gravity-card-inner');
+                if (inner) {
+                    inner.style.transform = `rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateZ(10px)`;
+                }
+            });
+        });
+
+        // Wheel horizontal scroll interaction
+        gravityStage.addEventListener('wheel', (e) => {
             e.preventDefault();
-            orbitStage.classList.add('is-active');
-            // Positive scroll (down) \u2192 ring turns to reveal next card
-            targetAngle -= e.deltaY * 0.28;
+            gravityStage.classList.add('is-hovered'); // Activate on interaction
+            
+            // Adjust scroll sensitivity
+            targetX += e.deltaY * 0.0035;
+            targetX = Math.max(0, Math.min(N - 1, targetX));
             startAnimate();
         }, { passive: false });
     }
 
-    // \u2500\u2500 Mouse drag to rotate \u2500\u2500
-    let isDragging  = false;
-    let dragLastX   = 0;
+    // -- Mouse Drag Interaction --
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartTargetX = 0;
 
-    if (orbitStage) {
-        orbitStage.addEventListener('mousedown', (e) => {
+    if (gravityStage) {
+        gravityStage.addEventListener('mousedown', (e) => {
             isDragging = true;
-            dragLastX  = e.clientX;
+            dragStartX = e.clientX;
+            dragStartTargetX = targetX;
+            gravityStage.classList.add('is-dragging');
             e.preventDefault();
         });
     }
 
     window.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
-        const delta  = e.clientX - dragLastX;
-        dragLastX    = e.clientX;
-        targetAngle += delta * 0.55;
+        const dx = e.clientX - dragStartX;
+        const { cardSpacing } = getLayoutMetrics();
+
+        // Convert drag offset into target index shift
+        targetX = dragStartTargetX - (dx / cardSpacing);
+        targetX = Math.max(0, Math.min(N - 1, targetX));
         startAnimate();
     });
 
-    window.addEventListener('mouseup', () => { isDragging = false; });
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            gravityStage.classList.remove('is-dragging');
+            // Settle / snap to nearest card index
+            targetX = Math.round(targetX);
+            startAnimate();
+        }
+    });
 
-    // \u2500\u2500 Touch drag \u2500\u2500
-    let touchLastX = 0;
-    if (orbitStage) {
-        orbitStage.addEventListener('touchstart', (e) => {
-            touchLastX = e.touches[0].clientX;
-            orbitStage.classList.add('is-active');
+    // -- Mobile Touch Interaction --
+    let touchStartX = 0;
+    let touchStartTargetX = 0;
+
+    if (gravityStage) {
+        gravityStage.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartTargetX = targetX;
+            gravityStage.classList.add('is-hovered');
         }, { passive: true });
 
-        orbitStage.addEventListener('touchmove', (e) => {
-            const delta  = e.touches[0].clientX - touchLastX;
-            touchLastX   = e.touches[0].clientX;
-            targetAngle += delta * 0.55;
+        gravityStage.addEventListener('touchmove', (e) => {
+            const dx = e.touches[0].clientX - touchStartX;
+            const { cardSpacing } = getLayoutMetrics();
+
+            targetX = touchStartTargetX - (dx / cardSpacing);
+            targetX = Math.max(0, Math.min(N - 1, targetX));
+            startAnimate();
+        }, { passive: true });
+
+        gravityStage.addEventListener('touchend', () => {
+            targetX = Math.round(targetX);
             startAnimate();
         }, { passive: true });
     }
 
-    // \u2500\u2500 Custom cursor \u2500\u2500
-    const cursor     = document.getElementById('galleryCursor');
+    // -- Custom Cursor lag alignment --
+    const cursor = document.getElementById('galleryCursor');
     const cursorRing = document.getElementById('galleryCursorRing');
-    let   cRingX = 0, cRingY = 0, cRafId;
+    let cRingX = 0, cRingY = 0, cRafId;
 
     if (cursor && cursorRing) {
         const galSection = document.getElementById('gallery');
         if (galSection) {
             galSection.addEventListener('mouseenter', () => {
-                cursor.style.opacity     = '1';
+                cursor.style.opacity = '1';
                 cursorRing.style.opacity = '1';
             });
             galSection.addEventListener('mouseleave', () => {
-                cursor.style.opacity     = '0';
+                cursor.style.opacity = '0';
                 cursorRing.style.opacity = '0';
                 cancelAnimationFrame(cRafId);
             });
             galSection.addEventListener('mousemove', (e) => {
                 cursor.style.left = e.clientX + 'px';
-                cursor.style.top  = e.clientY + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
                 cancelAnimationFrame(cRafId);
                 const lagRing = () => {
                     cRingX += (e.clientX - cRingX) * 0.12;
                     cRingY += (e.clientY - cRingY) * 0.12;
                     cursorRing.style.left = cRingX + 'px';
-                    cursorRing.style.top  = cRingY + 'px';
+                    cursorRing.style.top = cRingY + 'px';
                     cRafId = requestAnimationFrame(lagRing);
                 };
                 cRafId = requestAnimationFrame(lagRing);
@@ -385,16 +431,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // \u2500\u2500 Rebuild on resize (recalculate radius) \u2500\u2500
+    // -- Resize event re-aligning active metrics --
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            buildCards();
-            orbitRing.style.transform = `rotateY(${currentAngle}deg)`;
-            updateCards();
-        }, 180);
+            updateGalleryTrack();
+        }, 150);
     });
 
 });
-

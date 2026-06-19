@@ -153,38 +153,28 @@
                 </div>
             </section>
 
-            <hr class="divider">            <!-- ORBIT GALLERY SECTION -->
+            <hr class="divider">            <!-- ANTI-GRAVITY GALLERY SECTION -->
             <section id="gallery" class="gallery-section" data-aos="fade-up">
                 <h2 class="section-title">Work Gallery</h2>
-                <p class="gallery-hint">Hover the image &middot; Scroll to orbit</p>
+                <p class="gallery-hint" id="galleryHint">Hover image &middot; Scroll to explore</p>
 
                 <!-- Custom cursor -->
                 <div class="gallery-cursor" id="galleryCursor"></div>
                 <div class="gallery-cursor-ring" id="galleryCursorRing"></div>
 
-                <!-- Orbit stage wrapper (overflow clip) -->
-                <div class="orbit-wrap">
-                    <div class="orbit-stage" id="orbitStage">
-
-                        <!-- Center hero image -->
-                        <div class="orbit-hero" id="orbitHero">
-                            <img src="work/IMG-20260529-WA0003.jpg" alt="Featured Work">
-                            <div class="orbit-hero-shine"></div>
-                            <div class="orbit-hero-label">Hover to Explore</div>
-                        </div>
-
-                        <!-- 3D rotating ring (cards injected by JS) -->
-                        <div class="orbit-3d" id="orbit3d">
-                            <div class="orbit-ring" id="orbitRing"></div>
+                <!-- Gravity stage wrapper -->
+                <div class="gravity-wrap">
+                    <div class="gravity-stage" id="gravityStage">
+                        <div class="gravity-track" id="gravityTrack">
+                            <!-- Cards will be dynamically injected here by JavaScript -->
                         </div>
 
                         <!-- Meta UI -->
-                        <div class="orbit-ui" id="orbitUI">
-                            <span class="orbit-count" id="orbitCount">01 / 25</span>
-                            <span class="orbit-sep">&middot;</span>
-                            <span class="orbit-scroll-hint">Scroll to rotate</span>
+                        <div class="gravity-ui" id="gravityUI">
+                            <span class="gravity-count" id="gravityCount">01 / 25</span>
+                            <span class="gravity-sep">&middot;</span>
+                            <span class="gravity-scroll-hint">Scroll to slide</span>
                         </div>
-
                     </div>
                 </div>
             </section>
