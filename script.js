@@ -289,10 +289,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // \u2500\u2500 Hero tilt on mouse move (inactive state only) \u2500\u2500
+    // ─── Hero tilt on mouse move (always active) ───
     if (orbitHero && orbitStage) {
         orbitStage.addEventListener('mousemove', (e) => {
-            if (orbitStage.classList.contains('is-active')) return;
             const rect = orbitStage.getBoundingClientRect();
             const dx = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2);
             const dy = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
