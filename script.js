@@ -121,248 +121,304 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ═══════════════════════════════════════════════
-    //  3D WORK GALLERY CAROUSEL
+    //  CINEMATIC ORBITAL GALLERY
     // ═══════════════════════════════════════════════
 
-    // All 28 work photos (excluding the 3 used in the stage)
-    const carouselPhotos = [
-        { src: 'work/IMG-20260512-WA0004.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260512-WA0006.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260513-WA0004.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260513-WA0005.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260515-WA0003.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260520-WA0001.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260520-WA0003.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260522-WA0019.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260522-WA0022.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260529-WA0002.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260529-WA0003.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260529-WA0004.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260529-WA0005.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260530-WA0007.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260606-WA0003.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260608-WA0000.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260608-WA0001.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260608-WA0002.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260608-WA0003.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260609-WA0005.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260611-WA0008.jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260617-WA0004 (1).jpg', label: 'Work · 2026' },
-        { src: 'work/IMG-20260617-WA0005 (1).jpg', label: 'Work · 2026' },
-        { src: 'work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg', label: 'Work · 2026' },
-        { src: 'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg', label: 'Work · 2026' },
+    const galleryPhotos = [
+        { src: 'work/IMG-20260512-WA0004.jpg' },
+        { src: 'work/IMG-20260512-WA0006.jpg' },
+        { src: 'work/IMG-20260513-WA0004.jpg' },
+        { src: 'work/IMG-20260513-WA0005.jpg' },
+        { src: 'work/IMG-20260515-WA0003.jpg' },
+        { src: 'work/IMG-20260520-WA0001.jpg' },
+        { src: 'work/IMG-20260520-WA0003.jpg' },
+        { src: 'work/IMG-20260522-WA0019.jpg' },
+        { src: 'work/IMG-20260522-WA0022.jpg' },
+        { src: 'work/IMG-20260529-WA0002.jpg' },
+        { src: 'work/IMG-20260529-WA0003.jpg' },
+        { src: 'work/IMG-20260529-WA0004.jpg' },
+        { src: 'work/IMG-20260529-WA0005.jpg' },
+        { src: 'work/IMG-20260530-WA0007.jpg' },
+        { src: 'work/IMG-20260606-WA0003.jpg' },
+        { src: 'work/IMG-20260608-WA0000.jpg' },
+        { src: 'work/IMG-20260608-WA0001.jpg' },
+        { src: 'work/IMG-20260608-WA0002.jpg' },
+        { src: 'work/IMG-20260608-WA0003.jpg' },
+        { src: 'work/IMG-20260609-WA0005.jpg' },
+        { src: 'work/IMG-20260611-WA0008.jpg' },
+        { src: 'work/IMG-20260617-WA0004 (1).jpg' },
+        { src: 'work/IMG-20260617-WA0005 (1).jpg' },
+        { src: 'work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg' },
+        { src: 'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg' },
     ];
 
-    const scene        = document.getElementById('carouselScene');
-    const counterEl    = document.getElementById('carouselCounter');
-    const prevBtn      = document.getElementById('prevBtn');
-    const nextBtn      = document.getElementById('nextBtn');
-
-    if (!scene) return; // guard if section not present
-
-    const total        = carouselPhotos.length;
-    const angleStep    = 360 / total;
-    // Push cards far enough apart so they don't overlap
-    const radius       = Math.round((160 / 2) / Math.tan(Math.PI / total)) + 60;
-
-    let currentAngle   = 0;   // degrees, rotation around Y
-    let targetAngle    = 0;
-    let currentIndex   = 0;
-    let isAnimating    = false;
-
-    // Build cards
-    carouselPhotos.forEach((photo, i) => {
-        const card = document.createElement('div');
-        card.classList.add('carousel-card');
-        if (i === 0) card.classList.add('is-active');
-
-        const img = document.createElement('img');
-        img.src   = photo.src;
-        img.alt   = photo.label;
-        img.loading = 'lazy';
-
-        const label = document.createElement('div');
-        label.classList.add('carousel-card-label');
-        label.textContent = photo.label;
-
-        card.appendChild(img);
-        card.appendChild(label);
-        scene.appendChild(card);
-
-        // Click any card → rotate to it
-        card.addEventListener('click', () => {
-            goToIndex(i);
-        });
-
-        // Place in 3D ring
-        const cardAngle = i * angleStep;
-        card.style.transform = `rotateY(${cardAngle}deg) translateZ(${radius}px)`;
-    });
-
-    function getCards() {
-        return scene.querySelectorAll('.carousel-card');
-    }
-
-    function updateActiveCard() {
-        const cards = getCards();
-        cards.forEach((c, i) => c.classList.toggle('is-active', i === currentIndex));
-    }
-
-    function applyRotation(smooth = true) {
-        scene.style.transition = smooth
-            ? 'transform 0.9s cubic-bezier(0.23,1,0.32,1)'
-            : 'none';
-        scene.style.transform = `rotateY(${-currentAngle}deg)`;
-        updateActiveCard();
-        if (counterEl) counterEl.textContent = `${currentIndex + 1} / ${total}`;
-    }
-
-    function goToIndex(idx) {
-        currentIndex = ((idx % total) + total) % total;
-        currentAngle = currentIndex * angleStep;
-        applyRotation(true);
-    }
-
-    // Prev / Next buttons
-    prevBtn && prevBtn.addEventListener('click', () => goToIndex(currentIndex - 1));
-    nextBtn && nextBtn.addEventListener('click', () => goToIndex(currentIndex + 1));
-
-    // Keyboard arrows when carousel is in view
-    document.addEventListener('keydown', (e) => {
-        const wrapper = document.getElementById('carouselWrapper');
-        if (!wrapper) return;
-        const rect = wrapper.getBoundingClientRect();
-        const inView = rect.top < window.innerHeight && rect.bottom > 0;
-        if (!inView) return;
-        if (e.key === 'ArrowRight') goToIndex(currentIndex + 1);
-        if (e.key === 'ArrowLeft')  goToIndex(currentIndex - 1);
-    });
-
-    // ── Scroll inside the wrapper to spin ──
-    const wrapper = document.getElementById('carouselWrapper');
-    if (wrapper) {
-        wrapper.addEventListener('wheel', (e) => {
-            const rect = wrapper.getBoundingClientRect();
-            const inView = rect.top < window.innerHeight * 0.85 && rect.bottom > window.innerHeight * 0.15;
-            if (!inView) return;
-            e.preventDefault();
-            const direction = e.deltaY > 0 ? 1 : -1;
-            goToIndex(currentIndex + direction);
-        }, { passive: false });
-    }
-
-    // ── Drag to spin ──
-    let dragStartX    = 0;
-    let dragStartAngle = 0;
-    let isDragging    = false;
-
-    scene.addEventListener('mousedown', (e) => {
-        isDragging     = true;
-        dragStartX     = e.clientX;
-        dragStartAngle = currentAngle;
-        scene.style.transition = 'none';
-        e.preventDefault();
-    });
-
-    window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        const delta = (e.clientX - dragStartX) * 0.4;
-        currentAngle = dragStartAngle - delta;
-        scene.style.transform = `rotateY(${-currentAngle}deg)`;
-    });
-
-    window.addEventListener('mouseup', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        // Snap to nearest card
-        currentIndex = Math.round(currentAngle / angleStep);
-        currentAngle = currentIndex * angleStep;
-        currentIndex = ((currentIndex % total) + total) % total;
-        applyRotation(true);
-    });
-
-    // Touch drag support
-    let touchStartX = 0;
-    scene.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        dragStartAngle = currentAngle;
-        scene.style.transition = 'none';
-    }, { passive: true });
-
-    scene.addEventListener('touchmove', (e) => {
-        const delta = (e.touches[0].clientX - touchStartX) * 0.4;
-        currentAngle = dragStartAngle - delta;
-        scene.style.transform = `rotateY(${-currentAngle}deg)`;
-    }, { passive: true });
-
-    scene.addEventListener('touchend', () => {
-        currentIndex = Math.round(currentAngle / angleStep);
-        currentAngle = currentIndex * angleStep;
-        currentIndex = ((currentIndex % total) + total) % total;
-        applyRotation(true);
-    });
-
-    // Initial render
-    applyRotation(false);
-
-    // ── Gallery Stage 3D mouse parallax ──
-    const stage = document.getElementById('galleryStage');
+    // ── STAGE HOVER REVEAL ──
+    const stage       = document.getElementById('galleryStage');
     const centerPhoto = document.getElementById('centerPhoto');
-    if (stage && centerPhoto) {
-        stage.addEventListener('mousemove', (e) => {
-            const rect   = stage.getBoundingClientRect();
-            const cx     = rect.left + rect.width  / 2;
-            const cy     = rect.top  + rect.height / 2;
-            const dx     = (e.clientX - cx) / (rect.width  / 2); // -1 to 1
-            const dy     = (e.clientY - cy) / (rect.height / 2); // -1 to 1
-            const tiltX  =  dy * -8;  // tilt up/down
-            const tiltY  =  dx *  10; // tilt left/right
-            centerPhoto.style.transform = `scale(1.04) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+    const scrollIndicator = document.getElementById('galleryScrollIndicator');
+
+    if (stage) {
+        stage.addEventListener('mouseenter', () => stage.classList.add('is-hovered'));
+        stage.addEventListener('mouseleave', () => stage.classList.remove('is-hovered'));
+
+        // ── Deep 3D Parallax tilt on center photo ──
+        if (centerPhoto) {
+            stage.addEventListener('mousemove', (e) => {
+                const rect = stage.getBoundingClientRect();
+                const cx   = rect.left + rect.width  / 2;
+                const cy   = rect.top  + rect.height / 2;
+                const dx   = (e.clientX - cx) / (rect.width  / 2);
+                const dy   = (e.clientY - cy) / (rect.height / 2);
+                const tiltX = dy * -10;
+                const tiltY = dx *  12;
+                centerPhoto.style.transform =
+                    `scale(1.05) perspective(1200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+            });
+            stage.addEventListener('mouseleave', () => {
+                centerPhoto.style.transform = '';
+            });
+        }
+    }
+
+    // ── CUSTOM CURSOR (gallery section area) ──
+    const cursor     = document.getElementById('galleryCursor');
+    const cursorRing = document.getElementById('galleryCursorRing');
+    let   ringX = 0, ringY = 0;
+
+    if (cursor && cursorRing) {
+        let rafId;
+        const moveCursor = (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top  = e.clientY + 'px';
+            // Lagged ring follow
+            cancelAnimationFrame(rafId);
+            const animateRing = () => {
+                ringX += (e.clientX - ringX) * 0.12;
+                ringY += (e.clientY - ringY) * 0.12;
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top  = ringY + 'px';
+                rafId = requestAnimationFrame(animateRing);
+            };
+            rafId = requestAnimationFrame(animateRing);
+        };
+
+        const galSection = document.getElementById('gallery');
+        if (galSection) {
+            galSection.addEventListener('mouseenter', () => {
+                cursor.style.opacity = '1';
+                cursorRing.style.opacity = '1';
+            });
+            galSection.addEventListener('mouseleave', () => {
+                cursor.style.opacity = '0';
+                cursorRing.style.opacity = '0';
+                cancelAnimationFrame(rafId);
+            });
+            galSection.addEventListener('mousemove', moveCursor);
+        }
+    }
+
+    // ── BUILD ORBITAL GRID ──
+    const orbitalTrack = document.getElementById('orbitalTrack');
+    if (!orbitalTrack) return;
+
+    // Responsive card width
+    function getCardWidth() {
+        const w = window.innerWidth;
+        if (w <= 500)  return 110;
+        if (w <= 768)  return 140;
+        if (w <= 1100) return 180;
+        return 220;
+    }
+
+    // Compute column count based on viewport
+    function getColCount() {
+        const w = window.innerWidth;
+        if (w <= 500)  return 2;
+        if (w <= 768)  return 3;
+        if (w <= 1100) return 4;
+        return 5;
+    }
+
+    const orbitalItems = [];
+
+    function buildOrbitalGrid() {
+        orbitalTrack.innerHTML = '';
+        orbitalItems.length = 0;
+
+        const colCount  = getColCount();
+        const cardW     = getCardWidth();
+        const gapX      = 28;
+        const gapY      = 36;
+        const cardH     = cardW * 1.25;
+        const trackW    = colCount * cardW + (colCount - 1) * gapX;
+
+        orbitalTrack.style.width    = trackW + 'px';
+        orbitalTrack.style.height   = (Math.ceil(galleryPhotos.length / colCount)) * (cardH + gapY) + 'px';
+
+        galleryPhotos.forEach((photo, i) => {
+            const col    = i % colCount;
+            const row    = Math.floor(i / colCount);
+            const left   = col * (cardW + gapX);
+            const top    = row * (cardH + gapY);
+
+            // Subtle arc offset — alternating rows sway left/right for organic feel
+            const arcOffset = (row % 2 === 0 ? 1 : -1) * (col - (colCount - 1) / 2) * 6;
+
+            const item = document.createElement('div');
+            item.className = 'orbital-item';
+            item.style.left   = left + 'px';
+            item.style.top    = (top + arcOffset) + 'px';
+            item.style.width  = cardW + 'px';
+
+            const card = document.createElement('div');
+            card.className = 'orbital-card';
+
+            const img = document.createElement('img');
+            img.src     = photo.src;
+            img.alt     = `Work ${i + 1}`;
+            img.loading = 'lazy';
+
+            const overlay = document.createElement('div');
+            overlay.className = 'orbital-card-overlay';
+
+            const glass = document.createElement('div');
+            glass.className = 'orbital-card-glass';
+
+            const labelWrap = document.createElement('div');
+            labelWrap.className = 'orbital-label';
+
+            const labelTxt = document.createElement('span');
+            labelTxt.className   = 'orbital-label-text';
+            labelTxt.textContent = 'Work · 2026';
+
+            const labelNum = document.createElement('span');
+            labelNum.className   = 'orbital-label-num';
+            labelNum.textContent = String(i + 1).padStart(2, '0');
+
+            labelWrap.appendChild(labelTxt);
+            labelWrap.appendChild(labelNum);
+
+            card.appendChild(img);
+            card.appendChild(overlay);
+            card.appendChild(glass);
+            card.appendChild(labelWrap);
+            item.appendChild(card);
+            orbitalTrack.appendChild(item);
+            orbitalItems.push(item);
+
+            // Micro-parallax on card hover
+            card.addEventListener('mousemove', (e) => {
+                const r  = card.getBoundingClientRect();
+                const mx = (e.clientX - r.left) / r.width  - 0.5;
+                const my = (e.clientY - r.top)  / r.height - 0.5;
+                card.style.transform =
+                    `translateY(-12px) scale(1.04) rotateY(${mx * 8}deg) rotateX(${my * -6}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+    }
+
+    buildOrbitalGrid();
+
+    // ── SCROLL-DRIVEN REVEAL (IntersectionObserver) ──
+    // Each item starts as translateY(180px) scale(0.6) opacity(0)
+    // Observer flips it to visible → CSS transition fires
+
+    let observerActive = false;
+
+    function setupObserver() {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.08,
+            rootMargin: '0px 0px -60px 0px'
         });
 
-        stage.addEventListener('mouseleave', () => {
-            centerPhoto.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
-        });
+        orbitalItems.forEach(item => io.observe(item));
+        return io;
     }
 
-    // ── Auto-rotate carousel when idle ──
-    let autoRotateTimer = null;
-    let userInteracted  = false;
+    let itemObserver = setupObserver();
 
-    function startAutoRotate() {
-        if (autoRotateTimer) return;
-        autoRotateTimer = setInterval(() => {
-            if (!userInteracted) goToIndex(currentIndex + 1);
-        }, 3500);
-    }
+    // ── SCROLL PARALLAX — items react to global scroll ──
+    // Each card shifts slightly on scroll creating depth layers
+    let ticking = false;
 
-    function resetAutoRotate() {
-        userInteracted = true;
-        clearInterval(autoRotateTimer);
-        autoRotateTimer = null;
-        setTimeout(() => {
-            userInteracted = false;
-            startAutoRotate();
-        }, 6000);
-    }
+    function onGlobalScroll() {
+        if (ticking) return;
+        requestAnimationFrame(() => {
+            const scrolled = window.scrollY;
 
-    if (prevBtn) prevBtn.addEventListener('click', resetAutoRotate);
-    if (nextBtn) nextBtn.addEventListener('click', resetAutoRotate);
-    scene.addEventListener('mousedown', resetAutoRotate);
-    scene.addEventListener('touchstart', resetAutoRotate, { passive: true });
-
-    // Start auto-rotate only when carousel is visible
-    const carouselObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                startAutoRotate();
-            } else {
-                clearInterval(autoRotateTimer);
-                autoRotateTimer = null;
+            // Hide scroll indicator once user scrolls past the stage
+            if (scrollIndicator) {
+                const stageEl = document.getElementById('galleryStage');
+                if (stageEl) {
+                    const stageBottom = stageEl.getBoundingClientRect().bottom;
+                    scrollIndicator.classList.toggle('hidden', stageBottom < window.innerHeight * 0.4);
+                }
             }
-        });
-    }, { threshold: 0.3 });
 
-    if (wrapper) carouselObserver.observe(wrapper);
+            ticking = false;
+        });
+        ticking = true;
+    }
+
+    window.addEventListener('scroll', onGlobalScroll, { passive: true });
+
+    // ── CURSOR PARALLAX inside orbital section ──
+    // Cards gently drift in response to mouse position
+    let mouseX = 0, mouseY = 0;
+    let prafId;
+
+    const orbitalSection = document.getElementById('orbitalSection');
+    if (orbitalSection) {
+        orbitalSection.addEventListener('mousemove', (e) => {
+            const rect = orbitalSection.getBoundingClientRect();
+            mouseX = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2);
+            mouseY = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
+
+            cancelAnimationFrame(prafId);
+            const animateParallax = () => {
+                orbitalItems.forEach((item, i) => {
+                    const depth   = ((i % 3) + 1) * 0.5;  // 0.5, 1.0, 1.5
+                    const offsetX = mouseX * depth * 8;
+                    const offsetY = mouseY * depth * 4;
+                    // Only shift if item is already revealed
+                    if (item.classList.contains('visible')) {
+                        item.style.setProperty('--px', `${offsetX}px`);
+                        item.style.setProperty('--py', `${offsetY}px`);
+                        item.style.marginLeft = offsetX + 'px';
+                        item.style.marginTop  = offsetY + 'px';
+                    }
+                });
+            };
+            prafId = requestAnimationFrame(animateParallax);
+        });
+
+        orbitalSection.addEventListener('mouseleave', () => {
+            cancelAnimationFrame(prafId);
+            orbitalItems.forEach(item => {
+                item.style.marginLeft = '';
+                item.style.marginTop  = '';
+            });
+        });
+    }
+
+    // Rebuild grid on resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            itemObserver.disconnect();
+            buildOrbitalGrid();
+            itemObserver = setupObserver();
+        }, 200);
+    });
 });
 

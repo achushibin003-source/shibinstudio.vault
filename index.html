@@ -158,7 +158,11 @@
             <!-- 3D WORK GALLERY SECTION -->
             <section id="gallery" class="gallery-section" data-aos="fade-up">
                 <h2 class="section-title">Work Gallery</h2>
-                <p class="gallery-hint">Hover the feature photo &middot; Scroll to spin the carousel</p>
+                <p class="gallery-hint">Hover the feature photo &middot; Scroll to reveal the collection</p>
+
+                <!-- Custom cursor elements -->
+                <div class="gallery-cursor" id="galleryCursor"></div>
+                <div class="gallery-cursor-ring" id="galleryCursorRing"></div>
 
                 <!-- STAGE: Central + Side reveal on hover -->
                 <div class="gallery-stage" id="galleryStage">
@@ -177,16 +181,16 @@
                     </div>
                 </div>
 
-                <!-- 3D CAROUSEL -->
-                <div class="carousel-hint" id="carouselHint">&#8595; Scroll inside carousel to spin</div>
-                <div class="carousel-wrapper" id="carouselWrapper">
-                    <div class="carousel-scene" id="carouselScene">
+                <!-- Scroll indicator -->
+                <div class="gallery-scroll-indicator" id="galleryScrollIndicator">
+                    <div class="scroll-arrow"></div>
+                    <span class="scroll-text">Scroll to discover</span>
+                </div>
+
+                <!-- ORBITAL PHOTO GRID (injected by JS, revealed on scroll) -->
+                <div class="orbital-section" id="orbitalSection">
+                    <div class="orbital-track" id="orbitalTrack">
                         <!-- Cards injected by JS -->
-                    </div>
-                    <div class="carousel-controls">
-                        <button class="carousel-btn" id="prevBtn" aria-label="Previous">&#8592;</button>
-                        <span class="carousel-counter" id="carouselCounter">1 / 25</span>
-                        <button class="carousel-btn" id="nextBtn" aria-label="Next">&#8594;</button>
                     </div>
                 </div>
             </section>
