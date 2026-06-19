@@ -153,44 +153,38 @@
                 </div>
             </section>
 
-            <hr class="divider">
-
-            <!-- 3D WORK GALLERY SECTION -->
+            <hr class="divider">            <!-- ORBIT GALLERY SECTION -->
             <section id="gallery" class="gallery-section" data-aos="fade-up">
                 <h2 class="section-title">Work Gallery</h2>
-                <p class="gallery-hint">Hover the feature photo &middot; Scroll to reveal the collection</p>
+                <p class="gallery-hint">Hover the image &middot; Scroll to orbit</p>
 
-                <!-- Custom cursor elements -->
+                <!-- Custom cursor -->
                 <div class="gallery-cursor" id="galleryCursor"></div>
                 <div class="gallery-cursor-ring" id="galleryCursorRing"></div>
 
-                <!-- STAGE: Central + Side reveal on hover -->
-                <div class="gallery-stage" id="galleryStage">
-                    <div class="gallery-side-photo left" id="sideLeft">
-                        <img src="work/IMG-20260513-WA0003.jpg" alt="Work photo">
-                        <div class="photo-shine"></div>
-                    </div>
-                    <div class="gallery-center-photo" id="centerPhoto">
-                        <img src="work/IMG-20260529-WA0003.jpg" alt="Featured Work">
-                        <div class="photo-shine"></div>
-                        <div class="gallery-center-label">Hover to Explore</div>
-                    </div>
-                    <div class="gallery-side-photo right" id="sideRight">
-                        <img src="work/IMG-20260519-WA0001.jpg" alt="Work photo">
-                        <div class="photo-shine"></div>
-                    </div>
-                </div>
+                <!-- Orbit stage wrapper (overflow clip) -->
+                <div class="orbit-wrap">
+                    <div class="orbit-stage" id="orbitStage">
 
-                <!-- Scroll indicator -->
-                <div class="gallery-scroll-indicator" id="galleryScrollIndicator">
-                    <div class="scroll-arrow"></div>
-                    <span class="scroll-text">Scroll to discover</span>
-                </div>
+                        <!-- Center hero image -->
+                        <div class="orbit-hero" id="orbitHero">
+                            <img src="work/IMG-20260529-WA0003.jpg" alt="Featured Work">
+                            <div class="orbit-hero-shine"></div>
+                            <div class="orbit-hero-label">Hover to Explore</div>
+                        </div>
 
-                <!-- ORBITAL PHOTO GRID (injected by JS, revealed on scroll) -->
-                <div class="orbital-section" id="orbitalSection">
-                    <div class="orbital-track" id="orbitalTrack">
-                        <!-- Cards injected by JS -->
+                        <!-- 3D rotating ring (cards injected by JS) -->
+                        <div class="orbit-3d" id="orbit3d">
+                            <div class="orbit-ring" id="orbitRing"></div>
+                        </div>
+
+                        <!-- Meta UI -->
+                        <div class="orbit-ui" id="orbitUI">
+                            <span class="orbit-count" id="orbitCount">01 / 25</span>
+                            <span class="orbit-sep">&middot;</span>
+                            <span class="orbit-scroll-hint">Scroll to rotate</span>
+                        </div>
+
                     </div>
                 </div>
             </section>

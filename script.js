@@ -120,305 +120,282 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ═══════════════════════════════════════════════
-    //  CINEMATIC ORBITAL GALLERY
-    // ═══════════════════════════════════════════════
+    // \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+    //  CINEMATIC ORBIT CAROUSEL GALLERY
+    // \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
-    const galleryPhotos = [
-        { src: 'work/IMG-20260512-WA0004.jpg' },
-        { src: 'work/IMG-20260512-WA0006.jpg' },
-        { src: 'work/IMG-20260513-WA0004.jpg' },
-        { src: 'work/IMG-20260513-WA0005.jpg' },
-        { src: 'work/IMG-20260515-WA0003.jpg' },
-        { src: 'work/IMG-20260520-WA0001.jpg' },
-        { src: 'work/IMG-20260520-WA0003.jpg' },
-        { src: 'work/IMG-20260522-WA0019.jpg' },
-        { src: 'work/IMG-20260522-WA0022.jpg' },
-        { src: 'work/IMG-20260529-WA0002.jpg' },
-        { src: 'work/IMG-20260529-WA0003.jpg' },
-        { src: 'work/IMG-20260529-WA0004.jpg' },
-        { src: 'work/IMG-20260529-WA0005.jpg' },
-        { src: 'work/IMG-20260530-WA0007.jpg' },
-        { src: 'work/IMG-20260606-WA0003.jpg' },
-        { src: 'work/IMG-20260608-WA0000.jpg' },
-        { src: 'work/IMG-20260608-WA0001.jpg' },
-        { src: 'work/IMG-20260608-WA0002.jpg' },
-        { src: 'work/IMG-20260608-WA0003.jpg' },
-        { src: 'work/IMG-20260609-WA0005.jpg' },
-        { src: 'work/IMG-20260611-WA0008.jpg' },
-        { src: 'work/IMG-20260617-WA0004 (1).jpg' },
-        { src: 'work/IMG-20260617-WA0005 (1).jpg' },
-        { src: 'work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg' },
-        { src: 'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg' },
+    const orbitPhotos = [
+        'work/IMG-20260512-WA0004.jpg',
+        'work/IMG-20260512-WA0006.jpg',
+        'work/IMG-20260513-WA0004.jpg',
+        'work/IMG-20260513-WA0005.jpg',
+        'work/IMG-20260515-WA0003.jpg',
+        'work/IMG-20260520-WA0001.jpg',
+        'work/IMG-20260520-WA0003.jpg',
+        'work/IMG-20260522-WA0019.jpg',
+        'work/IMG-20260522-WA0022.jpg',
+        'work/IMG-20260529-WA0002.jpg',
+        'work/IMG-20260529-WA0003.jpg',
+        'work/IMG-20260529-WA0004.jpg',
+        'work/IMG-20260529-WA0005.jpg',
+        'work/IMG-20260530-WA0007.jpg',
+        'work/IMG-20260606-WA0003.jpg',
+        'work/IMG-20260608-WA0000.jpg',
+        'work/IMG-20260608-WA0001.jpg',
+        'work/IMG-20260608-WA0002.jpg',
+        'work/IMG-20260608-WA0003.jpg',
+        'work/IMG-20260609-WA0005.jpg',
+        'work/IMG-20260611-WA0008.jpg',
+        'work/IMG-20260617-WA0004 (1).jpg',
+        'work/IMG-20260617-WA0005 (1).jpg',
+        'work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg',
+        'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg',
     ];
 
-    // ── STAGE HOVER REVEAL ──
-    const stage       = document.getElementById('galleryStage');
-    const centerPhoto = document.getElementById('centerPhoto');
-    const scrollIndicator = document.getElementById('galleryScrollIndicator');
+    const orbitStage  = document.getElementById('orbitStage');
+    const orbitHero   = document.getElementById('orbitHero');
+    const orbitRing   = document.getElementById('orbitRing');
+    const orbitCount  = document.getElementById('orbitCount');
 
-    if (stage) {
-        stage.addEventListener('mouseenter', () => stage.classList.add('is-hovered'));
-        stage.addEventListener('mouseleave', () => stage.classList.remove('is-hovered'));
+    if (!orbitRing) return; // guard
 
-        // ── Deep 3D Parallax tilt on center photo ──
-        if (centerPhoto) {
-            stage.addEventListener('mousemove', (e) => {
-                const rect = stage.getBoundingClientRect();
-                const cx   = rect.left + rect.width  / 2;
-                const cy   = rect.top  + rect.height / 2;
-                const dx   = (e.clientX - cx) / (rect.width  / 2);
-                const dy   = (e.clientY - cy) / (rect.height / 2);
-                const tiltX = dy * -10;
-                const tiltY = dx *  12;
-                centerPhoto.style.transform =
-                    `scale(1.05) perspective(1200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-            });
-            stage.addEventListener('mouseleave', () => {
-                centerPhoto.style.transform = '';
-            });
-        }
-    }
+    const N          = orbitPhotos.length;
+    const ANGLE_STEP = 360 / N;
 
-    // ── CUSTOM CURSOR (gallery section area) ──
-    const cursor     = document.getElementById('galleryCursor');
-    const cursorRing = document.getElementById('galleryCursorRing');
-    let   ringX = 0, ringY = 0;
-
-    if (cursor && cursorRing) {
-        let rafId;
-        const moveCursor = (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top  = e.clientY + 'px';
-            // Lagged ring follow
-            cancelAnimationFrame(rafId);
-            const animateRing = () => {
-                ringX += (e.clientX - ringX) * 0.12;
-                ringY += (e.clientY - ringY) * 0.12;
-                cursorRing.style.left = ringX + 'px';
-                cursorRing.style.top  = ringY + 'px';
-                rafId = requestAnimationFrame(animateRing);
-            };
-            rafId = requestAnimationFrame(animateRing);
-        };
-
-        const galSection = document.getElementById('gallery');
-        if (galSection) {
-            galSection.addEventListener('mouseenter', () => {
-                cursor.style.opacity = '1';
-                cursorRing.style.opacity = '1';
-            });
-            galSection.addEventListener('mouseleave', () => {
-                cursor.style.opacity = '0';
-                cursorRing.style.opacity = '0';
-                cancelAnimationFrame(rafId);
-            });
-            galSection.addEventListener('mousemove', moveCursor);
-        }
-    }
-
-    // ── BUILD ORBITAL GRID ──
-    const orbitalTrack = document.getElementById('orbitalTrack');
-    if (!orbitalTrack) return;
-
-    // Responsive card width
-    function getCardWidth() {
+    // \u2500\u2500 Responsive orbit radius \u2500\u2500
+    function getRadius() {
         const w = window.innerWidth;
-        if (w <= 500)  return 110;
-        if (w <= 768)  return 140;
-        if (w <= 1100) return 180;
-        return 220;
+        if (w <= 480)  return 240;
+        if (w <= 768)  return 320;
+        if (w <= 1100) return 400;
+        return 500;
     }
 
-    // Compute column count based on viewport
-    function getColCount() {
-        const w = window.innerWidth;
-        if (w <= 500)  return 2;
-        if (w <= 768)  return 3;
-        if (w <= 1100) return 4;
-        return 5;
-    }
+    // \u2500\u2500 Animation state \u2500\u2500
+    let currentAngle = 0;   // smoothed display angle
+    let targetAngle  = 0;   // scroll / drag target
+    let rafId        = null;
 
-    const orbitalItems = [];
+    // \u2500\u2500 Build orbit cards \u2500\u2500
+    function buildCards() {
+        orbitRing.innerHTML = '';
+        const R = getRadius();
 
-    function buildOrbitalGrid() {
-        orbitalTrack.innerHTML = '';
-        orbitalItems.length = 0;
-
-        const colCount  = getColCount();
-        const cardW     = getCardWidth();
-        const gapX      = 28;
-        const gapY      = 36;
-        const cardH     = cardW * 1.25;
-        const trackW    = colCount * cardW + (colCount - 1) * gapX;
-
-        orbitalTrack.style.width    = trackW + 'px';
-        orbitalTrack.style.height   = (Math.ceil(galleryPhotos.length / colCount)) * (cardH + gapY) + 'px';
-
-        galleryPhotos.forEach((photo, i) => {
-            const col    = i % colCount;
-            const row    = Math.floor(i / colCount);
-            const left   = col * (cardW + gapX);
-            const top    = row * (cardH + gapY);
-
-            // Subtle arc offset — alternating rows sway left/right for organic feel
-            const arcOffset = (row % 2 === 0 ? 1 : -1) * (col - (colCount - 1) / 2) * 6;
-
-            const item = document.createElement('div');
-            item.className = 'orbital-item';
-            item.style.left   = left + 'px';
-            item.style.top    = (top + arcOffset) + 'px';
-            item.style.width  = cardW + 'px';
-
+        orbitPhotos.forEach((src, i) => {
             const card = document.createElement('div');
-            card.className = 'orbital-card';
+            card.className = 'orbit-card';
+            card.dataset.index = i;
+
+            // Static 3D position: each card on the ring at its base angle
+            const baseAngle = i * ANGLE_STEP;
+            card.style.transform = `rotateY(${baseAngle}deg) translateZ(${R}px)`;
 
             const img = document.createElement('img');
-            img.src     = photo.src;
+            img.src     = src;
             img.alt     = `Work ${i + 1}`;
             img.loading = 'lazy';
 
             const overlay = document.createElement('div');
-            overlay.className = 'orbital-card-overlay';
+            overlay.className = 'orbit-card-overlay';
 
             const glass = document.createElement('div');
-            glass.className = 'orbital-card-glass';
+            glass.className = 'orbit-card-glass';
 
-            const labelWrap = document.createElement('div');
-            labelWrap.className = 'orbital-label';
-
-            const labelTxt = document.createElement('span');
-            labelTxt.className   = 'orbital-label-text';
-            labelTxt.textContent = 'Work · 2026';
-
-            const labelNum = document.createElement('span');
-            labelNum.className   = 'orbital-label-num';
-            labelNum.textContent = String(i + 1).padStart(2, '0');
-
-            labelWrap.appendChild(labelTxt);
-            labelWrap.appendChild(labelNum);
+            const num = document.createElement('span');
+            num.className   = 'orbit-card-num';
+            num.textContent = String(i + 1).padStart(2, '0');
 
             card.appendChild(img);
             card.appendChild(overlay);
             card.appendChild(glass);
-            card.appendChild(labelWrap);
-            item.appendChild(card);
-            orbitalTrack.appendChild(item);
-            orbitalItems.push(item);
-
-            // Micro-parallax on card hover
-            card.addEventListener('mousemove', (e) => {
-                const r  = card.getBoundingClientRect();
-                const mx = (e.clientX - r.left) / r.width  - 0.5;
-                const my = (e.clientY - r.top)  / r.height - 0.5;
-                card.style.transform =
-                    `translateY(-12px) scale(1.04) rotateY(${mx * 8}deg) rotateX(${my * -6}deg)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = '';
-            });
+            card.appendChild(num);
+            orbitRing.appendChild(card);
         });
     }
 
-    buildOrbitalGrid();
+    buildCards();
 
-    // ── SCROLL-DRIVEN REVEAL (IntersectionObserver) ──
-    // Each item starts as translateY(180px) scale(0.6) opacity(0)
-    // Observer flips it to visible → CSS transition fires
+    // \u2500\u2500 Per-frame card visual update \u2500\u2500
+    // Each card's "world angle" = its base angle + the ring's current rotation.
+    // Depth = cos(worldAngle): +1 = directly in front, -1 = directly behind.
+    function updateCards() {
+        const cards = orbitRing.querySelectorAll('.orbit-card');
+        let frontIdx   = 0;
+        let maxDepth   = -Infinity;
 
-    let observerActive = false;
+        cards.forEach((card, i) => {
+            const baseAngle  = i * ANGLE_STEP;
+            const worldAngle = baseAngle + currentAngle;
+            const rad        = worldAngle * Math.PI / 180;
+            const depth      = Math.cos(rad);              // -1 to +1
+            const t          = (depth + 1) / 2;            //  0 to 1
 
-    function setupObserver() {
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+            // Brightness: 0.22 (back) → 1.0 (front)
+            const brightness = 0.22 + 0.78 * t;
+            // Blur: 7px (back) → 0px (front)
+            const blur = (1 - t) * 7;
+            // Z-index for correct 2D paint order
+            card.style.zIndex = Math.round(t * 100);
+            card.style.filter = `brightness(${brightness.toFixed(3)}) blur(${blur.toFixed(2)}px)`;
+
+            if (depth > maxDepth) { maxDepth = depth; frontIdx = i; }
+        });
+
+        // Highlight front card
+        cards.forEach((card, i) => card.classList.toggle('is-front', i === frontIdx));
+
+        // Update counter
+        if (orbitCount) {
+            orbitCount.textContent =
+                `${String(frontIdx + 1).padStart(2, '0')} / ${N}`;
+        }
+    }
+
+    // Initial visual state (orbit hidden \u2192 just call update silently)
+    updateCards();
+
+    // \u2500\u2500 Smooth animation loop \u2500\u2500
+    function animate() {
+        const diff = targetAngle - currentAngle;
+
+        // Stop when close enough
+        if (Math.abs(diff) < 0.01) {
+            currentAngle = targetAngle;
+            orbitRing.style.transform = `rotateY(${currentAngle}deg)`;
+            updateCards();
+            rafId = null;
+            return;
+        }
+
+        // Exponential ease (lerp factor 0.07 = smooth, cinematic)
+        currentAngle += diff * 0.07;
+        orbitRing.style.transform = `rotateY(${currentAngle}deg)`;
+        updateCards();
+        rafId = requestAnimationFrame(animate);
+    }
+
+    function startAnimate() {
+        if (rafId) return;
+        rafId = requestAnimationFrame(animate);
+    }
+
+    // \u2500\u2500 Hover \u2192 activate / deactivate orbit \u2500\u2500
+    if (orbitStage) {
+        orbitStage.addEventListener('mouseenter', () => {
+            orbitStage.classList.add('is-active');
+        });
+        orbitStage.addEventListener('mouseleave', () => {
+            orbitStage.classList.remove('is-active');
+        });
+    }
+
+    // \u2500\u2500 Hero tilt on mouse move (inactive state only) \u2500\u2500
+    if (orbitHero && orbitStage) {
+        orbitStage.addEventListener('mousemove', (e) => {
+            if (orbitStage.classList.contains('is-active')) return;
+            const rect = orbitStage.getBoundingClientRect();
+            const dx = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2);
+            const dy = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
+            orbitHero.style.transform =
+                `scale(1.04) rotateX(${dy * -9}deg) rotateY(${dx * 11}deg)`;
+        });
+        orbitStage.addEventListener('mouseleave', () => {
+            orbitHero.style.transform = '';
+        });
+    }
+
+    // \u2500\u2500 Scroll to rotate \u2500\u2500
+    if (orbitStage) {
+        orbitStage.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            orbitStage.classList.add('is-active');
+            // Positive scroll (down) \u2192 ring turns to reveal next card
+            targetAngle -= e.deltaY * 0.28;
+            startAnimate();
+        }, { passive: false });
+    }
+
+    // \u2500\u2500 Mouse drag to rotate \u2500\u2500
+    let isDragging  = false;
+    let dragLastX   = 0;
+
+    if (orbitStage) {
+        orbitStage.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragLastX  = e.clientX;
+            e.preventDefault();
+        });
+    }
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const delta  = e.clientX - dragLastX;
+        dragLastX    = e.clientX;
+        targetAngle += delta * 0.55;
+        startAnimate();
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // \u2500\u2500 Touch drag \u2500\u2500
+    let touchLastX = 0;
+    if (orbitStage) {
+        orbitStage.addEventListener('touchstart', (e) => {
+            touchLastX = e.touches[0].clientX;
+            orbitStage.classList.add('is-active');
+        }, { passive: true });
+
+        orbitStage.addEventListener('touchmove', (e) => {
+            const delta  = e.touches[0].clientX - touchLastX;
+            touchLastX   = e.touches[0].clientX;
+            targetAngle += delta * 0.55;
+            startAnimate();
+        }, { passive: true });
+    }
+
+    // \u2500\u2500 Custom cursor \u2500\u2500
+    const cursor     = document.getElementById('galleryCursor');
+    const cursorRing = document.getElementById('galleryCursorRing');
+    let   cRingX = 0, cRingY = 0, cRafId;
+
+    if (cursor && cursorRing) {
+        const galSection = document.getElementById('gallery');
+        if (galSection) {
+            galSection.addEventListener('mouseenter', () => {
+                cursor.style.opacity     = '1';
+                cursorRing.style.opacity = '1';
             });
-        }, {
-            threshold: 0.08,
-            rootMargin: '0px 0px -60px 0px'
-        });
-
-        orbitalItems.forEach(item => io.observe(item));
-        return io;
-    }
-
-    let itemObserver = setupObserver();
-
-    // ── SCROLL PARALLAX — items react to global scroll ──
-    // Each card shifts slightly on scroll creating depth layers
-    let ticking = false;
-
-    function onGlobalScroll() {
-        if (ticking) return;
-        requestAnimationFrame(() => {
-            const scrolled = window.scrollY;
-
-            // Hide scroll indicator once user scrolls past the stage
-            if (scrollIndicator) {
-                const stageEl = document.getElementById('galleryStage');
-                if (stageEl) {
-                    const stageBottom = stageEl.getBoundingClientRect().bottom;
-                    scrollIndicator.classList.toggle('hidden', stageBottom < window.innerHeight * 0.4);
-                }
-            }
-
-            ticking = false;
-        });
-        ticking = true;
-    }
-
-    window.addEventListener('scroll', onGlobalScroll, { passive: true });
-
-    // ── CURSOR PARALLAX inside orbital section ──
-    // Cards gently drift in response to mouse position
-    let mouseX = 0, mouseY = 0;
-    let prafId;
-
-    const orbitalSection = document.getElementById('orbitalSection');
-    if (orbitalSection) {
-        orbitalSection.addEventListener('mousemove', (e) => {
-            const rect = orbitalSection.getBoundingClientRect();
-            mouseX = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2);
-            mouseY = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
-
-            cancelAnimationFrame(prafId);
-            const animateParallax = () => {
-                orbitalItems.forEach((item, i) => {
-                    const depth   = ((i % 3) + 1) * 0.5;  // 0.5, 1.0, 1.5
-                    const offsetX = mouseX * depth * 8;
-                    const offsetY = mouseY * depth * 4;
-                    // Only shift if item is already revealed
-                    if (item.classList.contains('visible')) {
-                        item.style.setProperty('--px', `${offsetX}px`);
-                        item.style.setProperty('--py', `${offsetY}px`);
-                        item.style.marginLeft = offsetX + 'px';
-                        item.style.marginTop  = offsetY + 'px';
-                    }
-                });
-            };
-            prafId = requestAnimationFrame(animateParallax);
-        });
-
-        orbitalSection.addEventListener('mouseleave', () => {
-            cancelAnimationFrame(prafId);
-            orbitalItems.forEach(item => {
-                item.style.marginLeft = '';
-                item.style.marginTop  = '';
+            galSection.addEventListener('mouseleave', () => {
+                cursor.style.opacity     = '0';
+                cursorRing.style.opacity = '0';
+                cancelAnimationFrame(cRafId);
             });
-        });
+            galSection.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top  = e.clientY + 'px';
+                cancelAnimationFrame(cRafId);
+                const lagRing = () => {
+                    cRingX += (e.clientX - cRingX) * 0.12;
+                    cRingY += (e.clientY - cRingY) * 0.12;
+                    cursorRing.style.left = cRingX + 'px';
+                    cursorRing.style.top  = cRingY + 'px';
+                    cRafId = requestAnimationFrame(lagRing);
+                };
+                cRafId = requestAnimationFrame(lagRing);
+            });
+        }
     }
 
-    // Rebuild grid on resize
+    // \u2500\u2500 Rebuild on resize (recalculate radius) \u2500\u2500
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            itemObserver.disconnect();
-            buildOrbitalGrid();
-            itemObserver = setupObserver();
-        }, 200);
+            buildCards();
+            orbitRing.style.transform = `rotateY(${currentAngle}deg)`;
+            updateCards();
+        }, 180);
     });
+
 });
 
