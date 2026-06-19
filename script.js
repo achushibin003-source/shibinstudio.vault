@@ -154,11 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const gravityStage  = document.getElementById('gravityStage');
     const gravityTrack  = document.getElementById('gravityTrack');
-    const gravityCount  = document.getElementById('gravityCount');
 
     if (!gravityTrack) return; // guard
 
     const N = gravityPhotos.length;
+    const BUFFER_SIZE = 3;
 
     // -- Sizing Configuration (sync with CSS variables) --
     function getLayoutMetrics() {
@@ -174,13 +174,33 @@ document.addEventListener('DOMContentLoaded', () => {
     let targetX  = 0;   // target scroll index
     let rafId    = null;
 
-    // -- Generate portfolio cards --
+    // -- Interaction States --
+    let isHovered  = false;
+    let isDragging = false;
+    let isTouched  = false;
+
+    // -- Generate portfolio cards (with cloning for infinite endless loop) --
     function buildGravityCards() {
         gravityTrack.innerHTML = '';
-        gravityPhotos.forEach((src, i) => {
+        const totalItems = [];
+
+        // 1. Prepend clones of last BUFFER_SIZE items
+        for (let j = N - BUFFER_SIZE; j < N; j++) {
+            totalItems.push({ src: gravityPhotos[j], index: j });
+        }
+        // 2. Real items
+        for (let j = 0; j < N; j++) {
+            totalItems.push({ src: gravityPhotos[j], index: j });
+        }
+        // 3. Append clones of first BUFFER_SIZE items
+        for (let j = 0; j < BUFFER_SIZE; j++) {
+            totalItems.push({ src: gravityPhotos[j], index: j });
+        }
+
+        totalItems.forEach((item, i) => {
             const card = document.createElement('div');
             card.className = 'gravity-card';
-            card.dataset.index = i;
+            card.dataset.index = item.index;
 
             const inner = document.createElement('div');
             inner.className = 'gravity-card-inner';
@@ -189,8 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
             media.className = 'gravity-card-media';
 
             const img = document.createElement('img');
-            img.src = src;
-            img.alt = `Portfolio Work ${i + 1}`;
+            img.src = item.src;
+            img.alt = `Portfolio Work ${item.index + 1}`;
             img.loading = 'lazy';
 
             const overlay = document.createElement('div');
@@ -199,21 +219,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const glass = document.createElement('div');
             glass.className = 'gravity-card-glass';
 
-            const num = document.createElement('span');
-            num.className = 'gravity-card-num';
-            num.textContent = String(i + 1).padStart(2, '0');
-
             media.appendChild(img);
             inner.appendChild(media);
             inner.appendChild(overlay);
             inner.appendChild(glass);
-            inner.appendChild(num);
             card.appendChild(inner);
 
             // Click-to-center functionality
             card.addEventListener('click', () => {
                 if (card.classList.contains('is-left') || card.classList.contains('is-right')) {
-                    targetX = i;
+                    targetX = i - BUFFER_SIZE;
                     startAnimate();
                 }
             });
@@ -229,49 +244,59 @@ document.addEventListener('DOMContentLoaded', () => {
         const { cardWidth, cardSpacing, cardMargin } = getLayoutMetrics();
         const stageWidth = gravityStage.clientWidth || window.innerWidth;
 
-        // Calculate translation to keep targetX centered (assuming track starts at left: 0)
-        const tx = (stageWidth / 2) - (currentX * cardSpacing) - cardMargin - (cardWidth / 2);
+        // Perform infinite wrap-around checks
+        while (currentX >= N) {
+            currentX -= N;
+            targetX -= N;
+        }
+        while (currentX < 0) {
+            currentX += N;
+            targetX += N;
+        }
+
+        // Translate the track using relative DOM indices: domX = currentX + BUFFER_SIZE
+        const domX = currentX + BUFFER_SIZE;
+        const tx = (stageWidth / 2) - (domX * cardSpacing) - cardMargin - (cardWidth / 2);
         gravityTrack.style.transform = `translateX(${tx}px)`;
 
-        // Identify center and flanking cards
-        const centerIdx = Math.round(currentX);
+        // Identify center and flanking cards (by DOM index)
+        const centerDomIdx = Math.round(domX);
         const cards = gravityTrack.querySelectorAll('.gravity-card');
 
         cards.forEach((card, idx) => {
             card.classList.remove('is-center', 'is-left', 'is-right');
-            if (idx === centerIdx) {
+            if (idx === centerDomIdx) {
                 card.classList.add('is-center');
-            } else if (idx === centerIdx - 1) {
+            } else if (idx === centerDomIdx - 1) {
                 card.classList.add('is-left');
-            } else if (idx === centerIdx + 1) {
+            } else if (idx === centerDomIdx + 1) {
                 card.classList.add('is-right');
             }
         });
-
-        // Update counter UI
-        if (gravityCount) {
-            const displayIdx = Math.max(0, Math.min(N - 1, centerIdx));
-            gravityCount.textContent = `${String(displayIdx + 1).padStart(2, '0')} / ${N}`;
-        }
     }
 
     // Set initial layout
     updateGalleryTrack();
 
     // -- Animation Loop --
+    const autoplaySpeed = 0.0035; // continuous drift speed when idle
+
     function animate() {
+        if (!isHovered && !isDragging && !isTouched) {
+            targetX += autoplaySpeed;
+        }
+
         const diff = targetX - currentX;
         
-        // Stop the loop when difference is negligible
-        if (Math.abs(diff) < 0.001) {
+        // Stop loop only when differences are zero AND autoplay is paused
+        if (Math.abs(diff) < 0.001 && (isHovered || isDragging || isTouched)) {
             currentX = targetX;
             updateGalleryTrack();
             rafId = null;
             return;
         }
 
-        // Lerp for smooth fluid animation
-        currentX += diff * 0.09; // Easing coefficient (0.09 is very smooth and elegant)
+        currentX += diff * 0.08; // smooth easing factor
         updateGalleryTrack();
         rafId = requestAnimationFrame(animate);
     }
@@ -282,13 +307,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Start autoplay loop automatically
+    startAnimate();
+
     // -- Mouse interactions for hover & 3D tilt parallax --
     if (gravityStage) {
         gravityStage.addEventListener('mouseenter', () => {
+            isHovered = true;
             gravityStage.classList.add('is-hovered');
         });
 
         gravityStage.addEventListener('mouseleave', () => {
+            isHovered = false;
             gravityStage.classList.remove('is-hovered');
             // Reset 3D tilt on all cards
             const inners = gravityTrack.querySelectorAll('.gravity-card-inner');
@@ -326,11 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Wheel horizontal scroll interaction
         gravityStage.addEventListener('wheel', (e) => {
             e.preventDefault();
-            gravityStage.classList.add('is-hovered'); // Activate on interaction
             
-            // Adjust scroll sensitivity
+            // Adjust scroll coordinate based on wheel delta
             targetX += e.deltaY * 0.0035;
-            targetX = Math.max(0, Math.min(N - 1, targetX));
             startAnimate();
         }, { passive: false });
     }
@@ -357,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Convert drag offset into target index shift
         targetX = dragStartTargetX - (dx / cardSpacing);
-        targetX = Math.max(0, Math.min(N - 1, targetX));
         startAnimate();
     });
 
@@ -377,6 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (gravityStage) {
         gravityStage.addEventListener('touchstart', (e) => {
+            isTouched = true;
             touchStartX = e.touches[0].clientX;
             touchStartTargetX = targetX;
             gravityStage.classList.add('is-hovered');
@@ -387,48 +415,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const { cardSpacing } = getLayoutMetrics();
 
             targetX = touchStartTargetX - (dx / cardSpacing);
-            targetX = Math.max(0, Math.min(N - 1, targetX));
             startAnimate();
         }, { passive: true });
 
         gravityStage.addEventListener('touchend', () => {
+            isTouched = false;
             targetX = Math.round(targetX);
             startAnimate();
         }, { passive: true });
-    }
-
-    // -- Custom Cursor lag alignment --
-    const cursor = document.getElementById('galleryCursor');
-    const cursorRing = document.getElementById('galleryCursorRing');
-    let cRingX = 0, cRingY = 0, cRafId;
-
-    if (cursor && cursorRing) {
-        const galSection = document.getElementById('gallery');
-        if (galSection) {
-            galSection.addEventListener('mouseenter', () => {
-                cursor.style.opacity = '1';
-                cursorRing.style.opacity = '1';
-            });
-            galSection.addEventListener('mouseleave', () => {
-                cursor.style.opacity = '0';
-                cursorRing.style.opacity = '0';
-                cancelAnimationFrame(cRafId);
-            });
-            galSection.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-                
-                cancelAnimationFrame(cRafId);
-                const lagRing = () => {
-                    cRingX += (e.clientX - cRingX) * 0.12;
-                    cRingY += (e.clientY - cRingY) * 0.12;
-                    cursorRing.style.left = cRingX + 'px';
-                    cursorRing.style.top = cRingY + 'px';
-                    cRafId = requestAnimationFrame(lagRing);
-                };
-                cRafId = requestAnimationFrame(lagRing);
-            });
-        }
     }
 
     // -- Resize event re-aligning active metrics --
