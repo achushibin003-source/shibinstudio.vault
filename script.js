@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -- Mouse Drag Interaction --
-    let isDragging = false;
+    isDragging = false;
     let dragStartX = 0;
     let dragStartTargetX = 0;
 
