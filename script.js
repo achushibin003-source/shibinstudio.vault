@@ -431,4 +431,493 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 150);
     });
 
+    // ===============================================
+    //  GAME-LIKE CUSTOM CURSOR & TARGET GAME ENGINE
+    // ===============================================
+
+    // 1. Inject UI Elements into the DOM
+    const customCursor = document.createElement('div');
+    customCursor.className = 'custom-cursor';
+    customCursor.id = 'customCursor';
+    
+    const customCursorRing = document.createElement('div');
+    customCursorRing.className = 'custom-cursor-ring';
+    customCursorRing.id = 'customCursorRing';
+    
+    document.body.appendChild(customCursor);
+    document.body.appendChild(customCursorRing);
+    
+    // Enable custom cursor by default
+    document.body.classList.add('has-custom-cursor');
+
+    const toggleContainer = document.createElement('div');
+    toggleContainer.className = 'game-toggle-container';
+    
+    const gameMuteBtn = document.createElement('button');
+    gameMuteBtn.className = 'game-mute-btn';
+    gameMuteBtn.id = 'gameMuteBtn';
+    gameMuteBtn.innerText = '🔊';
+    gameMuteBtn.title = 'Mute/Unmute Sounds';
+    gameMuteBtn.style.display = 'none';
+    
+    const gameToggleBtn = document.createElement('button');
+    gameToggleBtn.className = 'game-toggle-btn';
+    gameToggleBtn.id = 'gameToggleBtn';
+    gameToggleBtn.innerText = '🎮 Cursor Game';
+    
+    toggleContainer.appendChild(gameMuteBtn);
+    toggleContainer.appendChild(gameToggleBtn);
+    document.body.appendChild(toggleContainer);
+    
+    const gameScoreboard = document.createElement('div');
+    gameScoreboard.className = 'game-scoreboard';
+    gameScoreboard.id = 'gameScoreboard';
+    gameScoreboard.innerHTML = `
+        <div class="game-score-title">SPACE TARGET PRACTICE</div>
+        <div class="game-score-val" id="gameScoreVal">00 <span>pts</span></div>
+    `;
+    document.body.appendChild(gameScoreboard);
+    
+    const gameHintToast = document.createElement('div');
+    gameHintToast.className = 'game-hint-toast';
+    gameHintToast.id = 'gameHintToast';
+    gameHintToast.innerText = 'Click anywhere to shoot lasers! ☄️';
+    document.body.appendChild(gameHintToast);
+
+    // 2. Cursor State & Tracking Logic
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let cursorX = window.innerWidth / 2;
+    let cursorY = window.innerHeight / 2;
+    let ringX = window.innerWidth / 2;
+    let ringY = window.innerHeight / 2;
+    
+    let isGameMode = false;
+    let isMuted = false;
+    let score = 0;
+    let aliens = [];
+    const alienEmojis = ['👾', '🛸', '🛸', '👾'];
+    let audioCtx = null;
+    let gameLoopRaf = null;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    // Custom cursor hover interaction using event delegation
+    document.addEventListener('mouseover', (e) => {
+        const target = e.target.closest('a, button, input, textarea, [role="button"], .gravity-card, .skill-tag');
+        if (target) {
+            customCursor.classList.add('is-hovering');
+            customCursorRing.classList.add('is-hovering');
+        } else {
+            customCursor.classList.remove('is-hovering');
+            customCursorRing.classList.remove('is-hovering');
+        }
+    });
+
+    // Track mouse entering/leaving viewport to hide custom cursor elements
+    document.addEventListener('mouseleave', () => {
+        customCursor.style.opacity = '0';
+        customCursorRing.style.opacity = '0';
+    });
+    document.addEventListener('mouseenter', () => {
+        customCursor.style.opacity = '1';
+        customCursorRing.style.opacity = '1';
+    });
+
+    // Cursor easing loop
+    function updateCursorPosition() {
+        const dx = mouseX - cursorX;
+        const dy = mouseY - cursorY;
+        cursorX += dx * 0.25;
+        cursorY += dy * 0.25;
+        customCursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+
+        const rdx = mouseX - ringX;
+        const rdy = mouseY - ringY;
+        ringX += rdx * 0.12;
+        ringY += rdy * 0.12;
+        customCursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+
+        requestAnimationFrame(updateCursorPosition);
+    }
+    requestAnimationFrame(updateCursorPosition);
+
+    // 3. Programmatic Web Audio Synthesizer
+    function playLaserSound() {
+        if (isMuted) return;
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime); // start high
+            osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.15); // ramp down rapidly
+            
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.16);
+        } catch (err) {
+            console.warn('Web Audio synthesis not allowed or supported:', err);
+        }
+    }
+
+    function playExplosionSound() {
+        if (isMuted) return;
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Synthesize white noise buffer
+            const bufferSize = audioCtx.sampleRate * 0.25;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = buffer;
+
+            const filterNode = audioCtx.createBiquadFilter();
+            filterNode.type = 'bandpass';
+            filterNode.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            filterNode.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.25);
+
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+
+            noiseNode.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            noiseNode.start();
+            noiseNode.stop(audioCtx.currentTime + 0.26);
+        } catch (err) {
+            console.warn('Web Audio synthesis not allowed or supported:', err);
+        }
+    }
+
+    // 4. Target Alien Entity Class
+    class Alien {
+        constructor() {
+            this.element = document.createElement('div');
+            this.element.className = 'game-target';
+            this.element.innerText = alienEmojis[Math.floor(Math.random() * alienEmojis.length)];
+            
+            this.size = 48; // estimated bounding box size
+            
+            // Random start position within screen bounds
+            this.x = Math.random() * (window.innerWidth - 120) + 60;
+            this.y = Math.random() * (window.innerHeight - 250) + 100;
+            
+            // Random velocity direction
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 2 + 1.8;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            
+            this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+            document.body.appendChild(this.element);
+            
+            // Handle clicking the alien
+            this.element.addEventListener('mousedown', (e) => {
+                if (isGameMode) {
+                    this.hit();
+                    e.stopPropagation(); // prevent screen laser shot
+                }
+            });
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            // Collision detection with viewport boundaries (elastic bouncing)
+            if (this.x <= 10 || this.x >= window.innerWidth - this.size - 10) {
+                this.vx = -this.vx;
+                this.x = Math.max(10, Math.min(this.x, window.innerWidth - this.size - 10));
+            }
+            if (this.y <= 10 || this.y >= window.innerHeight - this.size - 10) {
+                this.vy = -this.vy;
+                this.y = Math.max(10, Math.min(this.y, window.innerHeight - this.size - 10));
+            }
+            
+            this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+        }
+        
+        hit() {
+            if (this.element.classList.contains('hit')) return;
+            
+            this.element.classList.add('hit');
+            score += 10;
+            updateScoreboard();
+            playExplosionSound();
+            createExplosionParticles(this.x + this.size / 2, this.y + this.size / 2);
+            triggerScreenShake();
+            
+            // Respawn after 3 seconds if game mode is still active
+            setTimeout(() => {
+                if (isGameMode) {
+                    this.reset();
+                } else {
+                    this.destroy();
+                }
+            }, 3000);
+        }
+        
+        reset() {
+            this.element.classList.remove('hit');
+            this.element.innerText = alienEmojis[Math.floor(Math.random() * alienEmojis.length)];
+            this.x = Math.random() * (window.innerWidth - 120) + 60;
+            this.y = Math.random() * (window.innerHeight - 250) + 100;
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 2 + 1.8;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            
+            this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
+        }
+        
+        destroy() {
+            if (this.element.parentNode) {
+                this.element.parentNode.removeChild(this.element);
+            }
+        }
+    }
+
+    // 5. Game Mechanics: Laser Beam and Explosion Particles
+    function createLaserBeam(x, y) {
+        const beam = document.createElement('div');
+        beam.className = 'laser-beam';
+        
+        // Shoot from bottom center of screen
+        const startX = window.innerWidth / 2;
+        const startY = window.innerHeight;
+        
+        const dx = x - startX;
+        const dy = y - startY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dx, -dy) * (180 / Math.PI);
+        
+        beam.style.height = `${distance}px`;
+        beam.style.left = `${startX}px`;
+        beam.style.top = `${startY - distance}px`;
+        beam.style.transform = `rotate(${angle}deg)`;
+        beam.style.transformOrigin = 'bottom center';
+        
+        document.body.appendChild(beam);
+        setTimeout(() => beam.remove(), 180);
+    }
+
+    function createLaserSparks(x, y) {
+        const particleCount = 8;
+        for (let i = 0; i < particleCount; i++) {
+            const p = document.createElement('div');
+            p.className = 'game-particle';
+            p.style.backgroundColor = '#ff3333';
+            p.style.width = '4px';
+            p.style.height = '4px';
+            p.style.left = `${x}px`;
+            p.style.top = `${y}px`;
+            
+            document.body.appendChild(p);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 3 + 1;
+            let vx = Math.cos(angle) * speed;
+            let vy = Math.sin(angle) * speed;
+            
+            let curX = x;
+            let curY = y;
+            let opacity = 1;
+            
+            function animSpark() {
+                curX += vx;
+                curY += vy;
+                opacity -= 0.05;
+                
+                p.style.transform = `translate3d(${curX - x}px, ${curY - y}px, 0)`;
+                p.style.opacity = opacity;
+                
+                if (opacity > 0) {
+                    requestAnimationFrame(animSpark);
+                } else {
+                    p.remove();
+                }
+            }
+            requestAnimationFrame(animSpark);
+        }
+    }
+
+    function createExplosionParticles(x, y) {
+        const colors = ['#ff3333', '#ff007f', '#00f2fe', '#e056fd', '#ffff33'];
+        const particleCount = 20;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const p = document.createElement('div');
+            p.className = 'game-particle';
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            p.style.left = `${x}px`;
+            p.style.top = `${y}px`;
+            
+            document.body.appendChild(p);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5 + 3;
+            let vx = Math.cos(angle) * speed;
+            let vy = Math.sin(angle) * speed;
+            
+            let curX = x;
+            let curY = y;
+            let opacity = 1;
+            
+            function animParticle() {
+                vy += 0.15; // apply gravity force
+                curX += vx;
+                curY += vy;
+                opacity -= 0.03;
+                
+                p.style.transform = `translate3d(${curX - x}px, ${curY - y}px, 0)`;
+                p.style.opacity = opacity;
+                
+                if (opacity > 0) {
+                    requestAnimationFrame(animParticle);
+                } else {
+                    p.remove();
+                }
+            }
+            requestAnimationFrame(animParticle);
+        }
+    }
+
+    function triggerScreenShake() {
+        document.body.classList.remove('screen-shake');
+        void document.body.offsetWidth; // force redraw/reflow
+        document.body.classList.add('screen-shake');
+        setTimeout(() => {
+            document.body.classList.remove('screen-shake');
+        }, 150);
+    }
+
+    function updateScoreboard() {
+        const valEl = document.getElementById('gameScoreVal');
+        if (valEl) {
+            valEl.innerHTML = `${score < 10 ? '0' + score : score} <span>pts</span>`;
+        }
+    }
+
+    // 6. Game State Controls
+    function spawnAliens() {
+        cleanupAliens();
+        for (let i = 0; i < 4; i++) {
+            aliens.push(new Alien());
+        }
+    }
+
+    function cleanupAliens() {
+        aliens.forEach(alien => alien.destroy());
+        aliens = [];
+    }
+
+    function startGameLoop() {
+        function loop() {
+            if (!isGameMode) return;
+            aliens.forEach(alien => alien.update());
+            gameLoopRaf = requestAnimationFrame(loop);
+        }
+        cancelAnimationFrame(gameLoopRaf);
+        gameLoopRaf = requestAnimationFrame(loop);
+    }
+
+    function toggleGameMode() {
+        isGameMode = !isGameMode;
+        
+        if (isGameMode) {
+            // Enable Game Cursor & UI
+            customCursor.classList.add('game-active');
+            customCursorRing.classList.add('game-active');
+            gameToggleBtn.classList.add('active');
+            gameToggleBtn.innerText = '🛸 Exit Game';
+            gameScoreboard.classList.add('active');
+            gameMuteBtn.style.display = 'flex';
+            
+            // Reset scoreboard & game entities
+            score = 0;
+            updateScoreboard();
+            spawnAliens();
+            
+            // Show toast instructions
+            gameHintToast.classList.add('active');
+            setTimeout(() => {
+                gameHintToast.classList.remove('active');
+            }, 4000);
+            
+            startGameLoop();
+        } else {
+            // Disable Game Cursor & UI
+            customCursor.classList.remove('game-active');
+            customCursorRing.classList.remove('game-active');
+            gameToggleBtn.classList.remove('active');
+            gameToggleBtn.innerText = '🎮 Cursor Game';
+            gameScoreboard.classList.remove('active');
+            gameMuteBtn.style.display = 'none';
+            gameHintToast.classList.remove('active');
+            
+            cleanupAliens();
+            cancelAnimationFrame(gameLoopRaf);
+        }
+    }
+
+    // 7. Event Listeners for Game Controls
+    gameToggleBtn.addEventListener('click', (e) => {
+        toggleGameMode();
+        e.stopPropagation();
+    });
+
+    gameMuteBtn.addEventListener('click', (e) => {
+        isMuted = !isMuted;
+        gameMuteBtn.innerText = isMuted ? '🔇' : '🔊';
+        e.stopPropagation();
+    });
+
+    // Global click listener to fire lasers in Game Mode
+    document.addEventListener('mousedown', (e) => {
+        if (!isGameMode) return;
+        
+        // Ignore clicks on mute or toggle controls
+        if (e.target.closest('#gameToggleBtn') || e.target.closest('#gameMuteBtn')) {
+            return;
+        }
+        
+        // Trigger gun recoil animation on the crosshair
+        customCursorRing.classList.remove('shooting');
+        void customCursorRing.offsetWidth;
+        customCursorRing.classList.add('shooting');
+        
+        playLaserSound();
+        createLaserBeam(e.clientX, e.clientY);
+        createLaserSparks(e.clientX, e.clientY);
+    });
+
 });
