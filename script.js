@@ -432,519 +432,157 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ===============================================
-    //  CUTE CHASING PET CURSOR SYSTEM
+    //  SLEEK INTERACTIVE MAGNETIC CUSTOM CURSOR
     // ===============================================
 
-    // 1. Dynamic DOM Injection: Summon Controls, Custom Cursor, Pet
-    const customCursor = document.createElement('div');
-    customCursor.className = 'custom-cursor';
-    customCursor.id = 'customCursor';
+    // 1. Dynamic DOM Injection: Custom Cursor Dot and Ring
+    const customCursorDot = document.createElement('div');
+    customCursorDot.className = 'custom-cursor-dot';
+    customCursorDot.id = 'customCursorDot';
     
     const customCursorRing = document.createElement('div');
     customCursorRing.className = 'custom-cursor-ring';
     customCursorRing.id = 'customCursorRing';
     
-    document.body.appendChild(customCursor);
+    document.body.appendChild(customCursorDot);
     document.body.appendChild(customCursorRing);
     
     // Enable custom cursor by default
     document.body.classList.add('has-custom-cursor');
 
-    // Controls panel
-    const toggleContainer = document.createElement('div');
-    toggleContainer.className = 'pet-toggle-container';
-    
-    const petMuteBtn = document.createElement('button');
-    petMuteBtn.className = 'pet-mute-btn';
-    petMuteBtn.id = 'petMuteBtn';
-    petMuteBtn.innerText = '🔊';
-    petMuteBtn.title = 'Mute/Unmute Sounds';
-    
-    const petToggleBtn = document.createElement('button');
-    petToggleBtn.className = 'pet-toggle-btn active';
-    petToggleBtn.id = 'petToggleBtn';
-    petToggleBtn.innerText = '🐱 Summoned';
-    
-    toggleContainer.appendChild(petMuteBtn);
-    toggleContainer.appendChild(petToggleBtn);
-    document.body.appendChild(toggleContainer);
-    
-    const petHintToast = document.createElement('div');
-    petHintToast.className = 'pet-hint-toast';
-    petHintToast.id = 'petHintToast';
-    petHintToast.innerText = 'Click anywhere to drop fish treats! 🐟';
-    document.body.appendChild(petHintToast);
-
-    // Inject Pet Container
-    const petContainer = document.createElement('div');
-    petContainer.className = 'pet-container';
-    petContainer.id = 'chasingPet';
-    
-    // Inner sprite holds the SVG cat
-    const petSprite = document.createElement('div');
-    petSprite.className = 'pet-sprite idle';
-    petSprite.id = 'chasingPetSprite';
-    
-    // Cute vector cat SVG
-    petSprite.innerHTML = `
-        <svg viewBox="0 0 50 40" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <!-- Cat tail -->
-            <path d="M 42 26 C 46 26, 48 20, 46 16 C 44 12, 42 16, 42 20 Z" fill="var(--accent-blue)" stroke="#ffffff" stroke-width="1.5"/>
-            <!-- Cat body -->
-            <rect x="12" y="16" width="30" height="18" rx="6" fill="var(--accent-blue)" stroke="#ffffff" stroke-width="1.5"/>
-            <!-- Legs -->
-            <rect x="15" y="32" width="5" height="6" rx="2" fill="var(--accent-blue)" stroke="#ffffff" stroke-width="1.5"/>
-            <rect x="34" y="32" width="5" height="6" rx="2" fill="var(--accent-blue)" stroke="#ffffff" stroke-width="1.5"/>
-            <!-- Cat head -->
-            <rect x="8" y="8" width="16" height="16" rx="4" fill="var(--accent-blue)" stroke="#ffffff" stroke-width="1.5"/>
-            <!-- Left ear -->
-            <polygon points="8,8 4,1 12,5" fill="var(--accent-blue)" stroke="#ffffff" stroke-width="1.5"/>
-            <!-- Right ear -->
-            <polygon points="20,8 24,1 16,5" fill="var(--accent-blue)" stroke="#ffffff" stroke-width="1.5"/>
-            <!-- Open Eyes -->
-            <g class="pet-eyes-open" id="petEyesOpen">
-                <circle cx="12" cy="14" r="1.5" fill="#ffffff"/>
-                <circle cx="12" cy="14" r="0.7" fill="#000000"/>
-                <circle cx="18" cy="14" r="1.5" fill="#ffffff"/>
-                <circle cx="18" cy="14" r="0.7" fill="#000000"/>
-            </g>
-            <!-- Closed Eyes -->
-            <g class="pet-eyes-closed" id="petEyesClosed" style="display: none;">
-                <path d="M 10.5 14 Q 12 15.5 13.5 14" stroke="#ffffff" fill="none" stroke-width="1.2" stroke-linecap="round"/>
-                <path d="M 16.5 14 Q 18 15.5 19.5 14" stroke="#ffffff" fill="none" stroke-width="1.2" stroke-linecap="round"/>
-            </g>
-            <!-- Nose & mouth -->
-            <path d="M 15 17 L 15 18 C 14.5 18.5, 14 18.5, 14 18 M 15 18 C 15.5 18.5, 16 18.5, 16 18" stroke="#ffffff" fill="none" stroke-width="1"/>
-        </svg>
-    `;
-    
-    petContainer.appendChild(petSprite);
-    document.body.appendChild(petContainer);
-
-    // 2. Chasing Pet & Cursor State
+    // 2. Cursor State & Tracking Logic
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let cursorX = window.innerWidth / 2;
-    let cursorY = window.innerHeight / 2;
+    let dotX = window.innerWidth / 2;
+    let dotY = window.innerHeight / 2;
     let ringX = window.innerWidth / 2;
     let ringY = window.innerHeight / 2;
-
-    let petX = window.innerWidth / 2 - 100;
-    let petY = window.innerHeight / 2 + 100;
     
-    let isSummoned = true;
-    let isMuted = false;
-    let score = 0;
-    
-    // States: 'IDLE', 'WALKING', 'RUNNING', 'SLEEPING', 'RETRIEVING', 'EATING'
-    let petState = 'IDLE'; 
-    let lastMouseTime = Date.now();
-    let currentTreat = null;
-    let audioCtx = null;
-    let petUpdateTimer = null;
-    let zzzSpawnInterval = null;
+    let activeMagneticElement = null;
 
-    // Track mouse coordinates
     window.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        lastMouseTime = Date.now();
-        
-        // Wake up pet if sleeping
-        if (petState === 'SLEEPING') {
-            wakeUpPet();
-        }
     });
 
-    // Custom cursor hover interaction via event delegation
+    // Custom cursor hover interaction for non-magnetic elements
     document.addEventListener('mouseover', (e) => {
-        const target = e.target.closest('a, button, input, textarea, [role="button"], .gravity-card, .skill-tag');
+        const target = e.target.closest('.skill-tag, .service-item');
         if (target) {
-            customCursor.classList.add('is-hovering');
+            customCursorDot.classList.add('is-hovering');
             customCursorRing.classList.add('is-hovering');
         } else {
-            customCursor.classList.remove('is-hovering');
+            customCursorDot.classList.remove('is-hovering');
             customCursorRing.classList.remove('is-hovering');
         }
     });
 
-    // Toggle custom cursor visibility when mouse leaves/enters window
+    // Track mouse entering/leaving viewport to hide custom cursor elements
     document.addEventListener('mouseleave', () => {
-        customCursor.style.opacity = '0';
+        customCursorDot.style.opacity = '0';
         customCursorRing.style.opacity = '0';
     });
     document.addEventListener('mouseenter', () => {
-        customCursor.style.opacity = '1';
+        customCursorDot.style.opacity = '1';
         customCursorRing.style.opacity = '1';
     });
 
-    // Easing custom cursor tracking loop
+    // Cursor easing loop with magnetic snap logic
     function updateCursorPosition() {
-        const dx = mouseX - cursorX;
-        const dy = mouseY - cursorY;
-        cursorX += dx * 0.25;
-        cursorY += dy * 0.25;
-        customCursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+        const dDotX = mouseX - dotX;
+        const dDotY = mouseY - dotY;
+        dotX += dDotX * 0.25;
+        dotY += dDotY * 0.25;
+        customCursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
 
-        const rdx = mouseX - ringX;
-        const rdy = mouseY - ringY;
-        ringX += rdx * 0.12;
-        ringY += rdy * 0.12;
-        customCursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+        if (activeMagneticElement) {
+            // Snap ring around the target element's boundaries
+            const rect = activeMagneticElement.getBoundingClientRect();
+            const elCenterX = rect.left + rect.width / 2;
+            const elCenterY = rect.top + rect.height / 2;
+            
+            const dRingX = elCenterX - ringX;
+            const dRingY = elCenterY - ringY;
+            ringX += dRingX * 0.22;
+            ringY += dRingY * 0.22;
+            
+            customCursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+            
+            const padding = 10;
+            customCursorRing.style.width = `${rect.width + padding}px`;
+            customCursorRing.style.height = `${rect.height + padding}px`;
+            
+            const styles = window.getComputedStyle(activeMagneticElement);
+            customCursorRing.style.borderRadius = styles.borderRadius || '4px';
+        } else {
+            // Standard elastic ring follow
+            const dRingX = mouseX - ringX;
+            const dRingY = mouseY - ringY;
+            ringX += dRingX * 0.15;
+            ringY += dRingY * 0.15;
+            
+            customCursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+            customCursorRing.style.width = '32px';
+            customCursorRing.style.height = '32px';
+            customCursorRing.style.borderRadius = '50%';
+        }
 
         requestAnimationFrame(updateCursorPosition);
     }
     requestAnimationFrame(updateCursorPosition);
 
-    // 3. Cute 8-Bit Web Audio Synthesizer
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
-
-    function playPlopSound() {
-        if (isMuted) return;
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(160, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.08); // rapid upward sweep
-            
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.09);
-        } catch (e) {
-            console.warn('Web Audio synthesis not allowed or supported:', e);
-        }
-    }
-
-    function playMunchSound() {
-        if (isMuted) return;
-        try {
-            initAudio();
-            const time = audioCtx.currentTime;
-            
-            // Note 1: C5 (523.25Hz)
-            const osc1 = audioCtx.createOscillator();
-            const gain1 = audioCtx.createGain();
-            osc1.type = 'triangle';
-            osc1.frequency.setValueAtTime(523.25, time);
-            
-            gain1.gain.setValueAtTime(0.12, time);
-            gain1.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
-            
-            osc1.connect(gain1);
-            gain1.connect(audioCtx.destination);
-            osc1.start(time);
-            osc1.stop(time + 0.09);
-            
-            // Note 2: E5 (659.25Hz) after slight delay
-            const osc2 = audioCtx.createOscillator();
-            const gain2 = audioCtx.createGain();
-            osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(659.25, time + 0.06);
-            
-            gain2.gain.setValueAtTime(0.12, time + 0.06);
-            gain2.gain.exponentialRampToValueAtTime(0.001, time + 0.18);
-            
-            osc2.connect(gain2);
-            gain2.connect(audioCtx.destination);
-            osc2.start(time + 0.06);
-            osc2.stop(time + 0.19);
-        } catch (e) {
-            console.warn('Web Audio synthesis not allowed or supported:', e);
-        }
-    }
-
-    // 4. Pet State Machine and Physics Loop
-    function setEyesState(sleeping) {
-        const open = document.getElementById('petEyesOpen');
-        const closed = document.getElementById('petEyesClosed');
-        if (open && closed) {
-            open.style.display = sleeping ? 'none' : 'block';
-            closed.style.display = sleeping ? 'block' : 'none';
-        }
-    }
-
-    function wakeUpPet() {
-        if (petState === 'SLEEPING') {
-            petState = 'IDLE';
-            setEyesState(false);
-            petSprite.className = 'pet-sprite idle';
-            
-            if (zzzSpawnInterval) {
-                clearInterval(zzzSpawnInterval);
-                zzzSpawnInterval = null;
-            }
-        }
-        lastMouseTime = Date.now();
-    }
-
-    function spawnZzz() {
-        if (!isSummoned || petState !== 'SLEEPING') return;
+    // 3. Magnetic Element Observers
+    function initMagneticEffects() {
+        const magneticElements = document.querySelectorAll('.nav a, .hero-socials-inline a, .email-link, .gravity-card');
         
-        const zzz = document.createElement('div');
-        zzz.className = 'sleep-zzz';
-        zzz.innerText = 'z';
-        // Randomize letter a bit
-        if (Math.random() > 0.6) zzz.innerText = 'Z';
-        
-        zzz.style.left = `${petX + 35}px`;
-        zzz.style.top = `${petY - 10}px`;
-        
-        document.body.appendChild(zzz);
-        setTimeout(() => zzz.remove(), 2200);
-    }
-
-    function spawnEatingHearts(x, y) {
-        const count = 4;
-        for (let i = 0; i < count; i++) {
-            const heart = document.createElement('div');
-            heart.className = 'eat-heart';
-            heart.innerText = Math.random() > 0.5 ? '❤️' : '✨';
-            heart.style.left = `${x}px`;
-            heart.style.top = `${y}px`;
-            heart.style.setProperty('--x-shift', `${(Math.random() * 40 - 20)}px`);
+        magneticElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                activeMagneticElement = el;
+                customCursorRing.classList.add('is-snapped');
+            });
             
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 1400);
-        }
-    }
-
-    function updatePetPhysics() {
-        if (!isSummoned) return;
-
-        // Set Target Position
-        let targetX = cursorX;
-        let targetY = cursorY + 12; // offset slightly below the cursor
-
-        if (currentTreat) {
-            targetX = currentTreat.x;
-            targetY = currentTreat.y;
-            
-            if (petState !== 'EATING') {
-                petState = 'RETRIEVING';
-            }
-        }
-
-        // Distance calculations
-        const dx = targetX - petX;
-        const dy = targetY - petY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        // State Transitions & Easing speeds
-        if (petState === 'EATING') {
-            // Wait for eating timer
-        } else if (petState === 'RETRIEVING') {
-            // Move fast to retrieve dropped treat
-            petSprite.className = 'pet-sprite running';
-            const speed = 4.5;
-            if (dist > 5) {
-                petX += (dx / dist) * speed;
-                petY += (dy / dist) * speed;
-            } else {
-                // Reach the treat! Eat it
-                eatTreat();
-            }
-        } else {
-            // Chasing the cursor
-            if (dist < 22) {
-                // Idle / Sleeping check
-                if (Date.now() - lastMouseTime > 7000) {
-                    if (petState !== 'SLEEPING') {
-                        petState = 'SLEEPING';
-                        setEyesState(true);
-                        petSprite.className = 'pet-sprite sleeping';
-                        
-                        if (!zzzSpawnInterval) {
-                            zzzSpawnInterval = setInterval(spawnZzz, 1400);
-                        }
-                    }
-                } else {
-                    petState = 'IDLE';
-                    petSprite.className = 'pet-sprite idle';
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const dx = e.clientX - centerX;
+                const dy = e.clientY - centerY;
+                
+                // Shift target slightly toward mouse position
+                const shiftX = Math.max(-8, Math.min(8, dx * 0.15));
+                const shiftY = Math.max(-8, Math.min(8, dy * 0.15));
+                
+                if (!el.classList.contains('gravity-card')) {
+                    el.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
                 }
-            } else {
-                // Walking vs Running
-                petState = dist > 220 ? 'RUNNING' : 'WALKING';
-                petSprite.className = petState === 'RUNNING' ? 'pet-sprite running' : 'pet-sprite walking';
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                activeMagneticElement = null;
+                customCursorRing.classList.remove('is-snapped');
+                el.style.transform = '';
                 
-                const speed = petState === 'RUNNING' ? 3.8 : 1.9;
-                petX += (dx / dist) * speed;
-                petY += (dy / dist) * speed;
-            }
-        }
-
-        // Direction facing (flip sprite horizontally)
-        if (petState !== 'SLEEPING' && petState !== 'EATING') {
-            if (dx > 2) {
-                petSprite.style.transform = 'scaleX(1)'; // face right
-            } else if (dx < -2) {
-                petSprite.style.transform = 'scaleX(-1)'; // face left
-            }
-        }
-
-        // Translate the pet container element
-        // Offset pet coordinates to center bottom
-        petContainer.style.transform = `translate3d(${petX - 25}px, ${petY - 35}px, 0)`;
-        
-        requestAnimationFrame(updatePetPhysics);
+                customCursorRing.style.width = '';
+                customCursorRing.style.height = '';
+                customCursorRing.style.borderRadius = '';
+            });
+        });
     }
+    initMagneticEffects();
 
-    // 5. Treat Dropping Mechanic
-    function dropTreat(x, y) {
-        if (!isSummoned) return;
-
-        // Clear existing treat
-        clearTreat();
-
-        // Create new treat element
-        const treat = document.createElement('div');
-        treat.className = 'pet-treat';
-        treat.innerText = '🐟';
-        treat.style.left = `${x}px`;
-        treat.style.top = `${y}px`;
-        
-        document.body.appendChild(treat);
-        
-        currentTreat = {
-            element: treat,
-            x: x,
-            y: y
-        };
-
-        playPlopSound();
-        wakeUpPet();
-        petState = 'RETRIEVING';
-    }
-
-    function clearTreat() {
-        if (currentTreat) {
-            currentTreat.element.remove();
-            currentTreat = null;
-        }
-    }
-
-    function eatTreat() {
-        if (petState === 'EATING' || !currentTreat) return;
-        
-        petState = 'EATING';
-        petSprite.className = 'pet-sprite eating';
-        
-        const eatX = currentTreat.x;
-        const eatY = currentTreat.y;
-        
-        // Face the food while eating
-        const tDx = eatX - petX;
-        if (tDx > 0) {
-            petSprite.style.transform = 'scaleX(1)';
-        } else {
-            petSprite.style.transform = 'scaleX(-1)';
-        }
-
-        // Shrink the treat
-        currentTreat.element.classList.add('disappear');
-
-        setTimeout(() => {
-            if (petState === 'EATING') {
-                playMunchSound();
-                spawnEatingHearts(eatX, eatY - 10);
-                clearTreat();
-                
-                // Return to chasing cursor
-                petState = 'IDLE';
-                petSprite.className = 'pet-sprite idle';
-            }
-        }, 800);
-    }
-
-    // 6. UI Handlers and summoning
-    function summonPet() {
-        isSummoned = true;
-        petContainer.style.opacity = '1';
-        petToggleBtn.classList.add('active');
-        petToggleBtn.innerText = '🐱 Summoned';
-        
-        // Show hint toast
-        petHintToast.classList.add('active');
-        setTimeout(() => {
-            petHintToast.classList.remove('active');
-        }, 4000);
-        
-        // Reset pet coordinates near center
-        petX = window.innerWidth / 2;
-        petY = window.innerHeight / 2 + 100;
-        wakeUpPet();
-    }
-
-    function dismissPet() {
-        isSummoned = false;
-        petContainer.style.opacity = '0';
-        petToggleBtn.classList.remove('active');
-        petToggleBtn.innerText = '🐱 Summon';
-        
-        clearTreat();
-        petHintToast.classList.remove('active');
-        
-        if (zzzSpawnInterval) {
-            clearInterval(zzzSpawnInterval);
-            zzzSpawnInterval = null;
-        }
-        petState = 'IDLE';
-    }
-
-    // Setup initial physics loop
-    requestAnimationFrame(updatePetPhysics);
-
-    // Summon controls listeners
-    petToggleBtn.addEventListener('click', (e) => {
-        if (isSummoned) {
-            dismissPet();
-        } else {
-            summonPet();
-        }
-        e.stopPropagation();
-    });
-
-    petMuteBtn.addEventListener('click', (e) => {
-        isMuted = !isMuted;
-        petMuteBtn.innerText = isMuted ? '🔇' : '🔊';
-        e.stopPropagation();
-    });
-
-    // Global click listener to drop food
+    // 4. Click Ripple Effect
     document.addEventListener('mousedown', (e) => {
-        if (!isSummoned) return;
+        const ripple = document.createElement('div');
+        ripple.className = 'click-ripple';
+        ripple.style.left = `${e.clientX}px`;
+        ripple.style.top = `${e.clientY}px`;
+        document.body.appendChild(ripple);
         
-        // Ignore clicks on mute or toggle controls
-        if (e.target.closest('#petToggleBtn') || e.target.closest('#petMuteBtn')) {
-            return;
-        }
-        
-        dropTreat(e.clientX, e.clientY);
+        setTimeout(() => {
+            ripple.remove();
+        }, 500);
     });
-
-    // Show initial instruction toast
-    setTimeout(() => {
-        if (isSummoned) {
-            petHintToast.classList.add('active');
-            setTimeout(() => {
-                petHintToast.classList.remove('active');
-            }, 4500);
-        }
-    }, 2500);
 
 });
 
