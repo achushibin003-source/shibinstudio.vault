@@ -16,81 +16,106 @@
 #intro-overlay {
     position: fixed;
     inset: 0;
-    background: #000;
     z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1), visibility 0.5s ease;
+    background: transparent;
+    overflow: hidden;
+    pointer-events: auto;
+    visibility: visible;
+    transition: visibility 0.8s ease;
 }
 
 #intro-overlay.hidden {
-    opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
 
-/* Animated gradient background */
-#intro-overlay::before {
-    content: '';
+/* Curtain Panels */
+.intro-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background-color: #050505;
+    z-index: 1;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+    will-change: transform;
+}
+
+.intro-panel-left {
+    left: 0;
+}
+
+.intro-panel-right {
+    right: 0;
+}
+
+#intro-overlay.hidden .intro-panel-left {
+    transform: translateX(-100%);
+}
+
+#intro-overlay.hidden .intro-panel-right {
+    transform: translateX(100%);
+}
+
+/* Stardust Background Canvas */
+#intro-canvas {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 60% 50%, rgba(59,130,246,0.08) 0%, transparent 70%);
-    animation: bgPulse 1.5s ease-in-out infinite alternate;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.55;
+    transition: opacity 0.5s ease;
 }
 
-@keyframes bgPulse {
-    to { transform: scale(1.1); opacity: 0.6; }
+#intro-overlay.hidden #intro-canvas,
+#intro-overlay.hidden .intro-wrap,
+#intro-overlay.hidden .intro-progress,
+#intro-overlay.hidden #skip-intro {
+    opacity: 0;
+    pointer-events: none;
 }
 
-/* Horizontal line that slides in */
-.intro-bg-line {
-    position: absolute;
-    top: 50%;
-    left: -100%;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
-    animation: lineSlide 0.5s cubic-bezier(0.76, 0, 0.24, 1) 0.1s forwards;
-}
-
-@keyframes lineSlide {
-    to { left: 0; }
-}
-
-/* Main container */
+/* Main typography container */
 .intro-wrap {
     text-align: center;
     position: relative;
-    z-index: 2;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* Clip-path mask reveal — each block clips from bottom to top */
 .intro-reveal-block {
     overflow: hidden;
     line-height: 1;
 }
 
-.intro-reveal-block.delay-1 { }
-.intro-reveal-block.delay-2 { margin-top: 1.5rem; }
+.intro-reveal-block.delay-2 { 
+    margin-top: 1.5rem; 
+}
 
-/* SHIBIN — large, bold, with light sweep */
+/* SHIBIN — Wireframe text filling with liquid sweep */
 .intro-main-name {
     font-family: var(--font-sans);
     font-size: clamp(4rem, 16vw, 14rem);
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: #fff;
     line-height: 1;
     position: relative;
-    background: linear-gradient(90deg, #fff 40%, var(--accent-blue) 50%, #fff 60%);
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.15);
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ffffff 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: slideUp 0.5s cubic-bezier(0.76, 0, 0.24, 1) 0.2s both,
-               lightSweep 0.8s ease 0.6s forwards;
+    
+    animation: 
+        slideUp 0.6s cubic-bezier(0.77, 0, 0.175, 1) 0.1s both,
+        liquidFill 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
 }
 
 @keyframes slideUp {
@@ -98,20 +123,41 @@
     to   { transform: translateY(0); }
 }
 
-@keyframes lightSweep {
-    0%   { background-position: 200% center; }
-    100% { background-position: -200% center; }
+@keyframes liquidFill {
+    0% {
+        background-position: 200% center;
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.15);
+    }
+    100% {
+        background-position: 0% center;
+        -webkit-text-stroke: 1px transparent;
+    }
 }
 
-/* studio — elegant, spaced */
+/* studio — elegant spaced out expand */
 .intro-studio-word {
     font-family: var(--font-fancy-light);
     font-size: clamp(2rem, 6vw, 5rem);
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 0.6em;
-    animation: slideUp 0.5s cubic-bezier(0.76, 0, 0.24, 1) 0.35s both;
+    color: rgba(255, 255, 255, 0.7);
     display: inline-block;
     padding-left: 0.6em;
+    
+    animation: 
+        slideUp 0.6s cubic-bezier(0.77, 0, 0.175, 1) 0.3s both,
+        textFadeExpand 1.2s ease 0.3s forwards;
+}
+
+@keyframes textFadeExpand {
+    0% {
+        letter-spacing: 0.1em;
+        opacity: 0;
+        filter: blur(4px);
+    }
+    100% {
+        letter-spacing: 0.6em;
+        opacity: 0.7;
+        filter: blur(0);
+    }
 }
 
 /* tagline */
@@ -119,10 +165,25 @@
     font-family: var(--font-sans);
     font-size: clamp(0.6rem, 1.2vw, 0.85rem);
     color: var(--gray);
-    letter-spacing: 0.35em;
     text-transform: uppercase;
-    animation: slideUp 0.5s cubic-bezier(0.76, 0, 0.24, 1) 0.5s both;
     display: inline-block;
+    
+    animation: 
+        slideUp 0.6s cubic-bezier(0.77, 0, 0.175, 1) 0.5s both,
+        textFadeExpandTagline 1.2s ease 0.5s forwards;
+}
+
+@keyframes textFadeExpandTagline {
+    0% {
+        letter-spacing: 0.15em;
+        opacity: 0;
+        filter: blur(3px);
+    }
+    100% {
+        letter-spacing: 0.35em;
+        opacity: 1;
+        filter: blur(0);
+    }
 }
 
 /* Progress bar */
@@ -133,7 +194,9 @@
     transform: translateX(-50%);
     width: 120px;
     height: 1px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 3;
+    transition: opacity 0.4s ease;
 }
 
 .intro-progress-fill {
@@ -141,10 +204,77 @@
     width: 0;
     background: var(--accent-blue);
     box-shadow: 0 0 8px var(--accent-blue);
-    animation: fillBar 1.0s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+    transition: width 0.1s linear;
 }
 
-@keyframes fillBar { to { width: 100%; } }
+/* Interactive Circular Skip Button */
+#skip-intro {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 2.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    z-index: 10;
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity 0.4s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+#skip-intro:hover {
+    transform: scale(1.08);
+}
+
+.skip-text {
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.skip-circle {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.skip-circle-bg {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1.5px;
+    fill: rgba(10, 10, 10, 0.3);
+    backdrop-filter: blur(2px);
+    transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.skip-circle-fill {
+    stroke: var(--accent-blue);
+    stroke-width: 2px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+#skip-intro:hover .skip-circle-bg {
+    fill: rgba(59, 130, 246, 0.1);
+    stroke: rgba(255, 255, 255, 0.15);
+}
+
+#skip-intro:hover .skip-text {
+    color: var(--accent-hover);
+}
 
 
 * {

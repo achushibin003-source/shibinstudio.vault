@@ -1,11 +1,190 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ── INTRO ──
+    // ── INTERACTIVE CURTAIN-SPLIT INTRO ENGINE ──
     const introOverlay = document.getElementById('intro-overlay');
+    const introCanvas = document.getElementById('intro-canvas');
+    let introCtx = null;
+    let introParticles = [];
+    let introAnimationId = null;
+    let introMouse = { x: null, y: null };
+    let introMouseActive = false;
+
+    // Canvas Resizing Setup
+    function resizeIntroCanvas() {
+        if (introCanvas) {
+            introCanvas.width = window.innerWidth;
+            introCanvas.height = window.innerHeight;
+        }
+    }
+    window.addEventListener('resize', resizeIntroCanvas);
+    resizeIntroCanvas();
+
+    // Mouse Tracking for Repulsion Force Fields
     if (introOverlay) {
-        setTimeout(() => {
+        introOverlay.addEventListener('mousemove', (e) => {
+            introMouse.x = e.clientX;
+            introMouse.y = e.clientY;
+            introMouseActive = true;
+        });
+        introOverlay.addEventListener('mouseleave', () => {
+            introMouseActive = false;
+        });
+    }
+
+    // Intro Particle Class
+    class IntroParticle {
+        constructor(canvasW, canvasH) {
+            this.x = Math.random() * canvasW;
+            this.y = Math.random() * canvasH;
+            this.vx = (Math.random() - 0.5) * 0.45; // slow drifts
+            this.vy = (Math.random() - 0.5) * 0.45;
+            this.radius = Math.random() * 1.5 + 0.6;
+            this.baseAlpha = Math.random() * 0.35 + 0.15;
+            this.alpha = this.baseAlpha;
+            this.flickerSpeed = Math.random() * 0.012 + 0.004;
+            this.flickerDir = Math.random() > 0.5 ? 1 : -1;
+            
+            // White-Blue-Purple color palette
+            const colorRand = Math.random();
+            if (colorRand < 0.45) {
+                this.color = 'rgba(59, 130, 246,'; // blue
+            } else if (colorRand < 0.75) {
+                this.color = 'rgba(139, 92, 246,'; // purple
+            } else {
+                this.color = 'rgba(255, 255, 255,'; // white
+            }
+        }
+
+        update(canvasW, canvasH) {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Boundaries wrapping
+            if (this.x < 0) this.x = canvasW;
+            if (this.x > canvasW) this.x = 0;
+            if (this.y < 0) this.y = canvasH;
+            if (this.y > canvasH) this.y = 0;
+
+            // Subtle twinkle
+            this.alpha += this.flickerSpeed * this.flickerDir;
+            if (this.alpha > this.baseAlpha + 0.12 || this.alpha < this.baseAlpha - 0.12) {
+                this.flickerDir *= -1;
+            }
+
+            // Interactive Cursor Repulsion
+            if (introMouseActive && introMouse.x !== null && introMouse.y !== null) {
+                const dx = this.x - introMouse.x;
+                const dy = this.y - introMouse.y;
+                const distance = Math.hypot(dx, dy);
+                const maxDistance = 150; // repulsion radius
+
+                if (distance < maxDistance) {
+                    const force = (maxDistance - distance) / maxDistance; // 0 to 1
+                    const strength = force * 3.5;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    this.x += Math.cos(angle) * strength;
+                    this.y += Math.sin(angle) * strength;
+                }
+            }
+        }
+
+        draw(c) {
+            c.save();
+            c.beginPath();
+            c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            c.fillStyle = `${this.color}${this.alpha})`;
+            c.shadowBlur = this.radius * 4;
+            c.shadowColor = `${this.color}0.6)`;
+            c.fill();
+            c.restore();
+        }
+    }
+
+    // Spawn Particles
+    if (introCanvas) {
+        introCtx = introCanvas.getContext('2d');
+        const pCount = Math.min(Math.floor((window.innerWidth * window.innerHeight) / 11000), 110);
+        for (let i = 0; i < pCount; i++) {
+            introParticles.push(new IntroParticle(introCanvas.width, introCanvas.height));
+        }
+    }
+
+    // Animation Loop
+    function animateIntro() {
+        if (!introCanvas || !introCtx) return;
+        introCtx.clearRect(0, 0, introCanvas.width, introCanvas.height);
+        
+        introParticles.forEach(p => {
+            p.update(introCanvas.width, introCanvas.height);
+            p.draw(introCtx);
+        });
+
+        introAnimationId = requestAnimationFrame(animateIntro);
+    }
+
+    if (introCanvas) {
+        animateIntro();
+    }
+
+    // Timeline Progress & Skip Button Sync
+    const progressFill = document.querySelector('.intro-progress-fill');
+    const skipCircleFill = document.querySelector('.skip-circle-fill');
+    const skipIntroBtn = document.getElementById('skip-intro');
+    
+    let introFinished = false;
+    const duration = 1200; // 1.2s loading timeline
+    const startTime = performance.now();
+
+    function updateTimeline(now) {
+        if (introFinished) return;
+
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Update linear progress bar width
+        if (progressFill) {
+            progressFill.style.width = `${progress * 100}%`;
+        }
+
+        // Update circular SVG loading dashoffset (dasharray length ~100.53)
+        if (skipCircleFill) {
+            const dashOffset = 100.53 * (1 - progress);
+            skipCircleFill.style.strokeDashoffset = dashOffset;
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(updateTimeline);
+        } else {
+            finishIntro();
+        }
+    }
+
+    requestAnimationFrame(updateTimeline);
+
+    // Finish Intro -> Slide curtain open and clean up memory
+    function finishIntro() {
+        if (introFinished) return;
+        introFinished = true;
+
+        if (introAnimationId) {
+            cancelAnimationFrame(introAnimationId);
+        }
+        window.removeEventListener('resize', resizeIntroCanvas);
+
+        if (introOverlay) {
             introOverlay.classList.add('hidden');
-            setTimeout(() => introOverlay.remove(), 500);
-        }, 1200);
+            // Remove overlay from DOM once panel sliding animations finish (800ms)
+            setTimeout(() => {
+                introOverlay.remove();
+            }, 800);
+        }
+    }
+
+    if (skipIntroBtn) {
+        skipIntroBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            finishIntro();
+        });
     }
 
 

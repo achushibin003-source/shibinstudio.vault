@@ -14,7 +14,11 @@
 <body>
     <!-- INTRO -->
     <div id="intro-overlay">
-        <div class="intro-bg-line"></div>
+        <div class="intro-panel intro-panel-left"></div>
+        <div class="intro-panel intro-panel-right"></div>
+        
+        <canvas id="intro-canvas"></canvas>
+        
         <div class="intro-wrap">
             <div class="intro-reveal-block">
                 <div class="intro-main-name">SHIBIN</div>
@@ -27,6 +31,14 @@
             </div>
         </div>
         <div class="intro-progress"><div class="intro-progress-fill"></div></div>
+
+        <button id="skip-intro" aria-label="Skip Intro">
+            <span class="skip-text">Skip</span>
+            <svg class="skip-circle" width="56" height="56" viewBox="0 0 36 36">
+                <circle class="skip-circle-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="skip-circle-fill" cx="18" cy="18" r="16"></circle>
+            </svg>
+        </button>
     </div>
 
     <!-- HEADER / NAV -->
