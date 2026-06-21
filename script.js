@@ -18,11 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeIntroCanvas);
     resizeIntroCanvas();
 
-    // Mouse Tracking for Repulsion Force Fields
+    // Mouse Tracking for 3D Camera Parallax
+    let parallaxX = 0;
+    let parallaxY = 0;
     if (introOverlay) {
         introOverlay.addEventListener('mousemove', (e) => {
-            introMouse.x = e.clientX;
-            introMouse.y = e.clientY;
+            const dx = e.clientX - window.innerWidth / 2;
+            const dy = e.clientY - window.innerHeight / 2;
+            introMouse.x = dx * 0.15; // Target parallax shift
+            introMouse.y = dy * 0.15;
             introMouseActive = true;
         });
         introOverlay.addEventListener('mouseleave', () => {
@@ -30,82 +34,77 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Intro Particle Class
-    class IntroParticle {
-        constructor(canvasW, canvasH) {
-            this.x = Math.random() * canvasW;
-            this.y = Math.random() * canvasH;
-            this.vx = (Math.random() - 0.5) * 0.45; // slow drifts
-            this.vy = (Math.random() - 0.5) * 0.45;
-            this.radius = Math.random() * 1.5 + 0.6;
-            this.baseAlpha = Math.random() * 0.35 + 0.15;
-            this.alpha = this.baseAlpha;
-            this.flickerSpeed = Math.random() * 0.012 + 0.004;
-            this.flickerDir = Math.random() > 0.5 ? 1 : -1;
+    // 3D Space Warp Star Class
+    const maxDepth = 1000;
+    class WarpStar {
+        constructor() {
+            this.reset();
+            // Disperse initial depths
+            this.z = Math.random() * maxDepth;
+        }
+
+        reset() {
+            this.x = (Math.random() - 0.5) * window.innerWidth * 2.5;
+            this.y = (Math.random() - 0.5) * window.innerHeight * 2.5;
+            this.z = maxDepth;
             
             // White-Blue-Purple color palette
             const colorRand = Math.random();
             if (colorRand < 0.45) {
-                this.color = 'rgba(59, 130, 246,'; // blue
+                this.color = '59, 130, 246'; // Accent blue
             } else if (colorRand < 0.75) {
-                this.color = 'rgba(139, 92, 246,'; // purple
+                this.color = '139, 92, 246'; // Violet
             } else {
-                this.color = 'rgba(255, 255, 255,'; // white
+                this.color = '255, 255, 255'; // White
             }
         }
 
-        update(canvasW, canvasH) {
-            this.x += this.vx;
-            this.y += this.vy;
-
-            // Boundaries wrapping
-            if (this.x < 0) this.x = canvasW;
-            if (this.x > canvasW) this.x = 0;
-            if (this.y < 0) this.y = canvasH;
-            if (this.y > canvasH) this.y = 0;
-
-            // Subtle twinkle
-            this.alpha += this.flickerSpeed * this.flickerDir;
-            if (this.alpha > this.baseAlpha + 0.12 || this.alpha < this.baseAlpha - 0.12) {
-                this.flickerDir *= -1;
-            }
-
-            // Interactive Cursor Repulsion
-            if (introMouseActive && introMouse.x !== null && introMouse.y !== null) {
-                const dx = this.x - introMouse.x;
-                const dy = this.y - introMouse.y;
-                const distance = Math.hypot(dx, dy);
-                const maxDistance = 150; // repulsion radius
-
-                if (distance < maxDistance) {
-                    const force = (maxDistance - distance) / maxDistance; // 0 to 1
-                    const strength = force * 3.5;
-                    const angle = Math.atan2(dy, dx);
-                    
-                    this.x += Math.cos(angle) * strength;
-                    this.y += Math.sin(angle) * strength;
-                }
+        update(speed) {
+            this.z -= speed;
+            if (this.z <= 0) {
+                this.reset();
             }
         }
 
-        draw(c) {
-            c.save();
+        draw(c, pX, pY) {
+            const centerX = window.innerWidth / 2 - pX;
+            const centerY = window.innerHeight / 2 - pY;
+            
+            const fov = 150;
+            const k = fov / this.z;
+            const px = this.x * k + centerX;
+            const py = this.y * k + centerY;
+
+            // Bounds reset check
+            if (px < 0 || px > window.innerWidth || py < 0 || py > window.innerHeight) {
+                this.reset();
+                return;
+            }
+
+            // Draw line to represent warp speed stretching
+            const prevZ = this.z + 20; // Warp tail length factor
+            const prevK = fov / prevZ;
+            const pX2 = this.x * prevK + centerX;
+            const pY2 = this.y * prevK + centerY;
+
+            // Fade in as stars emerge from depth
+            const alpha = Math.min(1.0, (1.0 - this.z / maxDepth) * 1.5);
+
             c.beginPath();
-            c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            c.fillStyle = `${this.color}${this.alpha})`;
-            c.shadowBlur = this.radius * 4;
-            c.shadowColor = `${this.color}0.6)`;
-            c.fill();
-            c.restore();
+            c.moveTo(px, py);
+            c.lineTo(pX2, pY2);
+            c.strokeStyle = `rgba(${this.color}, ${alpha})`;
+            c.lineWidth = Math.max(1, (1.0 - this.z / maxDepth) * 2.5);
+            c.stroke();
         }
     }
 
-    // Spawn Particles
+    // Spawn Warp Stars
     if (introCanvas) {
         introCtx = introCanvas.getContext('2d');
-        const pCount = Math.min(Math.floor((window.innerWidth * window.innerHeight) / 11000), 110);
+        const pCount = 140; // Dense, immersive field
         for (let i = 0; i < pCount; i++) {
-            introParticles.push(new IntroParticle(introCanvas.width, introCanvas.height));
+            introParticles.push(new WarpStar());
         }
     }
 
@@ -114,9 +113,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!introCanvas || !introCtx) return;
         introCtx.clearRect(0, 0, introCanvas.width, introCanvas.height);
         
-        introParticles.forEach(p => {
-            p.update(introCanvas.width, introCanvas.height);
-            p.draw(introCtx);
+        // Eased mouse parallax lerp
+        if (introMouseActive) {
+            parallaxX += (introMouse.x - parallaxX) * 0.08;
+            parallaxY += (introMouse.y - parallaxY) * 0.08;
+        } else {
+            parallaxX += (0 - parallaxX) * 0.08;
+            parallaxY += (0 - parallaxY) * 0.08;
+        }
+
+        introParticles.forEach(star => {
+            star.update(10); // Star velocity
+            star.draw(introCtx, parallaxX, parallaxY);
         });
 
         introAnimationId = requestAnimationFrame(animateIntro);
