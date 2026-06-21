@@ -979,84 +979,212 @@ body.has-custom-cursor * {
     cursor: none !important;
 }
 
-/* Custom Cursor Dot */
+/* Custom Cursor Dot (Core responsive dot) */
 .custom-cursor-dot {
     position: fixed;
     top: 0;
     left: 0;
-    width: 6px;
-    height: 6px;
-    background-color: var(--accent-blue);
+    width: 8px;
+    height: 8px;
+    background-color: #ffffff;
     border-radius: 50%;
     pointer-events: none;
     z-index: 100000;
     transform: translate3d(-50%, -50%, 0);
-    transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
-    mix-blend-mode: difference;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4);
+    transition: 
+        width 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
+        height 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
+        background-color 0.2s ease,
+        opacity 0.2s ease;
 }
 
-/* Custom Cursor Ring (Elastic lagging ring) */
+/* Custom Cursor Ring (Elastic lagging morphing ring) */
 .custom-cursor-ring {
     position: fixed;
     top: 0;
     left: 0;
-    width: 32px;
-    height: 32px;
-    border: 1px solid rgba(59, 130, 246, 0.5);
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid rgba(59, 130, 246, 0.45);
     border-radius: 50%;
     pointer-events: none;
     z-index: 99999;
     transform: translate3d(-50%, -50%, 0);
-    /* Transition shapes and styles when snapping */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: rgba(59, 130, 246, 0);
+    backdrop-filter: blur(0px);
+    
+    /* Smooth transition of shapes, sizes, and colors */
     transition: 
         width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
         height 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
         border-radius 0.3s cubic-bezier(0.25, 1, 0.5, 1),
         border-color 0.3s ease,
         background-color 0.3s ease,
+        backdrop-filter 0.3s ease,
         opacity 0.3s ease;
-    mix-blend-mode: difference;
+}
+
+/* Stardust Trail Canvas Layer */
+#cursor-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 99998;
 }
 
 /* Hovering standard interactive elements (non-snapping expansion) */
 .custom-cursor-dot.is-hovering {
     width: 10px;
     height: 10px;
-    background-color: #ff3366;
+    background-color: #f43f5e; /* Rose 500 */
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.9), 0 0 24px rgba(244, 63, 94, 0.5);
 }
+
 .custom-cursor-ring.is-hovering {
-    width: 44px;
-    height: 44px;
-    border-color: rgba(255, 51, 102, 0.6);
+    width: 48px;
+    height: 48px;
+    border-color: rgba(244, 63, 94, 0.7);
+    background-color: rgba(244, 63, 94, 0.05);
 }
 
 /* Snap State - applied when cursor snaps to a button/link rect */
 .custom-cursor-ring.is-snapped {
-    border-color: rgba(59, 130, 246, 0.8);
-    background-color: rgba(59, 130, 246, 0.05);
-    mix-blend-mode: normal;
-    z-index: 999;
+    border-color: rgba(59, 130, 246, 0.85);
+    background-color: rgba(59, 130, 246, 0.08);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
+    z-index: 999; /* Snap under active nav items for readability */
 }
 
-/* Click Ripple Wave */
+.custom-cursor-dot.is-snapped {
+    opacity: 0; /* Hide core dot when snapped for clean highlight */
+}
+
+/* Context Badge Container (Inside cursor ring) */
+.cursor-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: 
+        opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Badge active layout */
+.custom-cursor-ring.has-badge {
+    width: 76px !important;
+    height: 76px !important;
+    background-color: rgba(10, 10, 10, 0.82);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(255, 255, 255, 0.1);
+    border-radius: 50% !important; /* Keep circle even if morphing */
+    z-index: 100001; /* Layer badge on top of everything */
+}
+
+.custom-cursor-ring.has-badge .cursor-badge {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.custom-cursor-dot.has-badge {
+    opacity: 0; /* Hide dot while showing big badge */
+}
+
+.cursor-badge-icon {
+    width: 16px;
+    height: 16px;
+    fill: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.cursor-badge-text {
+    font-family: var(--font-sans);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: #ffffff;
+    text-transform: uppercase;
+    margin-top: 5px;
+    line-height: 1;
+}
+
+/* Double Shockwave Click Ripple Wave */
 .click-ripple {
     position: fixed;
     top: 0;
     left: 0;
-    width: 30px;
-    height: 30px;
-    border: 1.5px solid var(--accent-blue);
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
     pointer-events: none;
-    z-index: 99998;
-    transform: translate3d(-50%, -50%, 0) scale(0.5);
-    opacity: 1;
-    animation: rippleEffect 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    z-index: 100002;
+    transform: translate3d(-50%, -50%, 0);
 }
 
-@keyframes rippleEffect {
-    0% { transform: translate3d(-50%, -50%, 0) scale(0.6); opacity: 1; }
-    100% { transform: translate3d(-50%, -50%, 0) scale(2.2); opacity: 0; }
+.click-ripple::before,
+.click-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 1;
+    pointer-events: none;
+}
+
+/* Outer expanding ring */
+.click-ripple::before {
+    border: 2px solid var(--accent-blue);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+    animation: ripplePulseOuter 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* Inner expanding dashed ring */
+.click-ripple::after {
+    border: 1px dashed var(--accent-hover);
+    animation: ripplePulseInner 0.5s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+}
+
+@keyframes ripplePulseOuter {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2.4);
+        opacity: 0;
+    }
+}
+
+@keyframes ripplePulseInner {
+    0% {
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.7);
+        opacity: 0;
+    }
 }
 
 /* Disable Custom Cursor on Mobile/Touch Devices */
@@ -1067,6 +1195,7 @@ body.has-custom-cursor * {
     }
     .custom-cursor-dot,
     .custom-cursor-ring,
+    #cursor-canvas,
     .click-ripple {
         display: none !important;
     }

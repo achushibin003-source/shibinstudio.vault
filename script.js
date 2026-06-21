@@ -38,22 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         easing: 'ease-out-cubic'
     });
 
-    // Click effect animation
-    document.addEventListener('click', function(e) {
-        const circle = document.createElement('div');
-        circle.classList.add('click-effect');
-        
-        // Position the circle at the click coordinates
-        circle.style.left = `${e.clientX}px`;
-        circle.style.top = `${e.clientY}px`;
-        
-        document.body.appendChild(circle);
-        
-        // Remove the element after the animation finishes
-        setTimeout(() => {
-            circle.remove();
-        }, 600);
-    });
+    // Click effect animation removed in favor of high-fidelity cursor shockwave ripple.
 
     // Video playback on hover
     const projectCards = document.querySelectorAll('.project-card');
@@ -432,10 +417,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ===============================================
-    //  SLEEK INTERACTIVE MAGNETIC CUSTOM CURSOR
+    //  ULTRA-PREMIUM GLOWING CUSTOM CURSOR SYSTEM
     // ===============================================
 
-    // 1. Dynamic DOM Injection: Custom Cursor Dot and Ring
+    // 1. Dynamic DOM Injection: Custom Cursor Dot, Ring (with internal badge layout), and Canvas Trail
+    const cursorCanvas = document.createElement('canvas');
+    cursorCanvas.id = 'cursor-canvas';
+    document.body.appendChild(cursorCanvas);
+    const ctx = cursorCanvas.getContext('2d');
+
     const customCursorDot = document.createElement('div');
     customCursorDot.className = 'custom-cursor-dot';
     customCursorDot.id = 'customCursorDot';
@@ -443,6 +433,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const customCursorRing = document.createElement('div');
     customCursorRing.className = 'custom-cursor-ring';
     customCursorRing.id = 'customCursorRing';
+
+    // Inject Badge Container inside Cursor Ring
+    const cursorBadge = document.createElement('div');
+    cursorBadge.className = 'cursor-badge';
+    const cursorBadgeIcon = document.createElement('div');
+    cursorBadgeIcon.className = 'cursor-badge-icon';
+    const cursorBadgeText = document.createElement('span');
+    cursorBadgeText.className = 'cursor-badge-text';
+    
+    cursorBadge.appendChild(cursorBadgeIcon);
+    cursorBadge.appendChild(cursorBadgeText);
+    customCursorRing.appendChild(cursorBadge);
     
     document.body.appendChild(customCursorDot);
     document.body.appendChild(customCursorRing);
@@ -450,7 +452,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enable custom cursor by default
     document.body.classList.add('has-custom-cursor');
 
-    // 2. Cursor State & Tracking Logic
+    // 2. Canvas Resizing Setup
+    function resizeCanvas() {
+        cursorCanvas.width = window.innerWidth;
+        cursorCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // 3. Stardust Particle System
+    const particles = [];
+    
+    class StardustParticle {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 1.3 + 0.4;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed - 0.25; // Slight drift upward
+            this.size = Math.random() * 3.5 + 1; // Size between 1px and 4.5px
+            this.alpha = 1;
+            this.decay = Math.random() * 0.02 + 0.016; // Fades out in about 50 frames
+            this.color = color;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.alpha -= this.decay;
+        }
+
+        draw(c) {
+            c.save();
+            c.globalAlpha = this.alpha;
+            c.beginPath();
+            c.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            c.fillStyle = this.color;
+            c.shadowBlur = 6;
+            c.shadowColor = this.color;
+            c.fill();
+            c.restore();
+        }
+    }
+
+    // 4. Cursor State & Tracking Coordinates
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let dotX = window.innerWidth / 2;
@@ -458,45 +504,155 @@ document.addEventListener('DOMContentLoaded', () => {
     let ringX = window.innerWidth / 2;
     let ringY = window.innerHeight / 2;
     
+    let lastSpawnX = window.innerWidth / 2;
+    let lastSpawnY = window.innerHeight / 2;
+    
     let activeMagneticElement = null;
+    let currentBadgeType = null;
 
     window.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
     });
 
-    // Custom cursor hover interaction for non-magnetic elements
+    // 5. Context-Aware Custom Badge Managers
+    function showCursorBadge(type) {
+        if (currentBadgeType === type) return;
+        currentBadgeType = type;
+        
+        customCursorRing.classList.add('has-badge');
+        customCursorDot.classList.add('has-badge');
+        
+        // Remove standard hover triggers if present
+        customCursorRing.classList.remove('is-hovering');
+        customCursorDot.classList.remove('is-hovering');
+        
+        if (type === 'play') {
+            cursorBadgeText.textContent = 'PLAY';
+            cursorBadgeIcon.innerHTML = `
+                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: #ffffff;">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            `;
+        } else if (type === 'drag') {
+            cursorBadgeText.textContent = 'DRAG';
+            cursorBadgeIcon.innerHTML = `
+                <svg viewBox="0 0 24 24" style="width: 15px; height: 15px; fill: #ffffff;">
+                    <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 1h-4v3H7l5 5 5-5h-3v-3z"/>
+                </svg>
+            `;
+        }
+    }
+
+    function hideCursorBadge() {
+        if (!currentBadgeType) return;
+        currentBadgeType = null;
+        
+        customCursorRing.classList.remove('has-badge');
+        customCursorDot.classList.remove('has-badge');
+        cursorBadgeText.textContent = '';
+        cursorBadgeIcon.innerHTML = '';
+    }
+
+    // 6. Global Event Delegation for Interactive States
     document.addEventListener('mouseover', (e) => {
-        const target = e.target.closest('.skill-tag, .service-item');
-        if (target) {
+        // Project Card -> Show PLAY badge
+        const projectCard = e.target.closest('.project-card');
+        if (projectCard) {
+            showCursorBadge('play');
+            return;
+        }
+
+        // Gravity Stage / Gallery Card -> Show DRAG badge
+        const gravityCard = e.target.closest('.gravity-card, .gravity-wrap');
+        if (gravityCard) {
+            showCursorBadge('drag');
+            return;
+        }
+
+        // Magnetic element snaps the ring -> Hide badge
+        const magnetic = e.target.closest('.nav a, .hero-socials-inline a, .email-link');
+        if (magnetic) {
+            hideCursorBadge();
+            return;
+        }
+
+        // Standard hover elements -> Expand dot and ring
+        const hoverTarget = e.target.closest('.skill-tag, .service-item, button, a, .contact-details a');
+        if (hoverTarget) {
+            hideCursorBadge();
             customCursorDot.classList.add('is-hovering');
             customCursorRing.classList.add('is-hovering');
-        } else {
-            customCursorDot.classList.remove('is-hovering');
-            customCursorRing.classList.remove('is-hovering');
+            return;
         }
+
+        // Default: reset all hover states
+        hideCursorBadge();
+        customCursorDot.classList.remove('is-hovering');
+        customCursorRing.classList.remove('is-hovering');
     });
 
     // Track mouse entering/leaving viewport to hide custom cursor elements
     document.addEventListener('mouseleave', () => {
         customCursorDot.style.opacity = '0';
         customCursorRing.style.opacity = '0';
+        cursorCanvas.style.opacity = '0';
     });
     document.addEventListener('mouseenter', () => {
         customCursorDot.style.opacity = '1';
         customCursorRing.style.opacity = '1';
+        cursorCanvas.style.opacity = '1';
     });
 
-    // Cursor easing loop with magnetic snap logic
+    // 7. Cursor Easing & Canvas Particle Animation Loop
     function updateCursorPosition() {
+        // 7a. Draw Canvas Particles (Stardust Trail)
+        ctx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+        
+        // Spawn stardust particles with interpolation for high-speed paths
+        const dist = Math.hypot(mouseX - lastSpawnX, mouseY - lastSpawnY);
+        if (dist > 3) {
+            const steps = Math.min(Math.floor(dist / 3), 6);
+            for (let i = 0; i < steps; i++) {
+                const ratio = i / steps;
+                const px = lastSpawnX + (mouseX - lastSpawnX) * ratio;
+                const py = lastSpawnY + (mouseY - lastSpawnY) * ratio;
+                
+                // Adaptive colors
+                let pColor = 'rgba(59, 130, 246, 0.7)'; // Accent blue
+                if (customCursorRing.classList.contains('is-hovering')) {
+                    pColor = 'rgba(244, 63, 94, 0.75)'; // Rose pink
+                } else if (customCursorRing.classList.contains('has-badge')) {
+                    pColor = 'rgba(255, 255, 255, 0.45)'; // White stardust
+                }
+                
+                particles.push(new StardustParticle(px, py, pColor));
+            }
+            lastSpawnX = mouseX;
+            lastSpawnY = mouseY;
+        }
+
+        // Update & Render existing particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.update();
+            if (p.alpha <= 0) {
+                particles.splice(i, 1);
+            } else {
+                p.draw(ctx);
+            }
+        }
+
+        // 7b. Dot Position Update (High stiffness)
         const dDotX = mouseX - dotX;
         const dDotY = mouseY - dotY;
-        dotX += dDotX * 0.25;
-        dotY += dDotY * 0.25;
+        dotX += dDotX * 0.35;
+        dotY += dDotY * 0.35;
         customCursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
 
+        // 7c. Ring Position Update (Lagging with Squash-and-Stretch physics or Magnetic Snapping)
         if (activeMagneticElement) {
-            // Snap ring around the target element's boundaries
+            // Snapped to a magnetic link/button
             const rect = activeMagneticElement.getBoundingClientRect();
             const elCenterX = rect.left + rect.width / 2;
             const elCenterY = rect.top + rect.height / 2;
@@ -508,37 +664,62 @@ document.addEventListener('DOMContentLoaded', () => {
             
             customCursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
             
-            const padding = 10;
+            const padding = 12;
             customCursorRing.style.width = `${rect.width + padding}px`;
             customCursorRing.style.height = `${rect.height + padding}px`;
             
             const styles = window.getComputedStyle(activeMagneticElement);
             customCursorRing.style.borderRadius = styles.borderRadius || '4px';
         } else {
-            // Standard elastic ring follow
+            // Standard tracking with inertia
             const dRingX = mouseX - ringX;
             const dRingY = mouseY - ringY;
-            ringX += dRingX * 0.15;
-            ringY += dRingY * 0.15;
             
-            customCursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
-            customCursorRing.style.width = '32px';
-            customCursorRing.style.height = '32px';
-            customCursorRing.style.borderRadius = '50%';
+            const lastRingX = ringX;
+            const lastRingY = ringY;
+            
+            ringX += dRingX * 0.16;
+            ringY += dRingY * 0.16;
+            
+            const vx = ringX - lastRingX;
+            const vy = ringY - lastRingY;
+            const speed = Math.hypot(vx, vy);
+            const stretch = Math.min(speed * 0.08, 0.4); // Max 40% stretch deformation
+            const angle = Math.atan2(vy, vx);
+            
+            let transformStr = `translate3d(${ringX}px, ${ringY}px, 0)`;
+            
+            if (customCursorRing.classList.contains('has-badge')) {
+                // Keep badge perfectly circular
+                customCursorRing.style.transform = transformStr;
+                customCursorRing.style.width = '';
+                customCursorRing.style.height = '';
+                customCursorRing.style.borderRadius = '';
+            } else {
+                // Apply Squash & Stretch along the velocity vector
+                transformStr += ` rotate(${angle}rad) scale(${1 + stretch}, ${1 - stretch * 0.5}) rotate(${-angle}rad)`;
+                customCursorRing.style.transform = transformStr;
+                
+                // Clear inline style sizes so CSS properties apply
+                customCursorRing.style.width = '';
+                customCursorRing.style.height = '';
+                customCursorRing.style.borderRadius = '';
+            }
         }
 
         requestAnimationFrame(updateCursorPosition);
     }
     requestAnimationFrame(updateCursorPosition);
 
-    // 3. Magnetic Element Observers
+    // 8. Magnetic Snapping Observer Init
     function initMagneticEffects() {
-        const magneticElements = document.querySelectorAll('.nav a, .hero-socials-inline a, .email-link, .gravity-card');
+        const magneticElements = document.querySelectorAll('.nav a, .hero-socials-inline a, .email-link');
         
         magneticElements.forEach(el => {
             el.addEventListener('mouseenter', () => {
                 activeMagneticElement = el;
                 customCursorRing.classList.add('is-snapped');
+                customCursorDot.classList.add('is-snapped');
             });
             
             el.addEventListener('mousemove', (e) => {
@@ -549,18 +730,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dx = e.clientX - centerX;
                 const dy = e.clientY - centerY;
                 
-                // Shift target slightly toward mouse position
+                // Magnetic shift multiplier
                 const shiftX = Math.max(-8, Math.min(8, dx * 0.15));
                 const shiftY = Math.max(-8, Math.min(8, dy * 0.15));
                 
-                if (!el.classList.contains('gravity-card')) {
-                    el.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
-                }
+                el.style.transform = `translate3d(${shiftX}px, ${shiftY}px, 0)`;
             });
             
             el.addEventListener('mouseleave', () => {
                 activeMagneticElement = null;
                 customCursorRing.classList.remove('is-snapped');
+                customCursorDot.classList.remove('is-snapped');
                 el.style.transform = '';
                 
                 customCursorRing.style.width = '';
@@ -571,8 +751,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initMagneticEffects();
 
-    // 4. Click Ripple Effect
+    // 9. High-Fidelity Click Ripple Effect
     document.addEventListener('mousedown', (e) => {
+        if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+        
         const ripple = document.createElement('div');
         ripple.className = 'click-ripple';
         ripple.style.left = `${e.clientX}px`;
@@ -581,8 +763,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setTimeout(() => {
             ripple.remove();
-        }, 500);
+        }, 600);
     });
+
 
 });
 
