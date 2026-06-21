@@ -414,6 +414,8 @@ document.addEventListener('DOMContentLoaded', () => {
         resizeTimer = setTimeout(() => {
             updateGalleryTrack();
         }, 150);
+    });
+
      // ===============================================
     //  ULTRA-PREMIUM GLOWING CUSTOM CURSOR SYSTEM
     // ===============================================
