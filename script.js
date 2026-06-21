@@ -307,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             inners.forEach(inner => {
                 inner.style.transform = '';
             });
+            startAnimate(); // Resume autoplay loop
         });
 
         gravityStage.addEventListener('mousemove', (e) => {
