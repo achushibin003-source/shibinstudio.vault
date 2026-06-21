@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (introOverlay) {
         setTimeout(() => {
             introOverlay.classList.add('hidden');
-            setTimeout(() => introOverlay.remove(), 1200);
-        }, 3000);
+            setTimeout(() => introOverlay.remove(), 500);
+        }, 1200);
     }
 
 
