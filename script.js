@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initialize AOS animation library
-    AOS.init({
+    if (window.AOS) AOS.init({
         duration: 1000,
         once: false,
         mirror: true,
@@ -297,314 +297,139 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===============================================
 
     const gravityPhotos = [
-        'work/IMG-20260512-WA0004.jpg',
-        'work/IMG-20260512-WA0006.jpg',
-        'work/IMG-20260513-WA0004.jpg',
-        'work/IMG-20260515-WA0003.jpg',
-        'work/IMG-20260520-WA0001.jpg',
-        'work/IMG-20260520-WA0003.jpg',
-        'work/IMG-20260522-WA0019.jpg',
-        'work/IMG-20260522-WA0022.jpg',
-        'work/IMG-20260529-WA0002.jpg',
-        'work/IMG-20260529-WA0003.jpg',
-        'work/IMG-20260529-WA0005.jpg',
-        'work/IMG-20260530-WA0007.jpg',
-        'work/IMG-20260606-WA0003.jpg',
-        'work/IMG-20260608-WA0000.jpg',
-        'work/IMG-20260608-WA0001.jpg',
-        'work/IMG-20260608-WA0002.jpg',
-        'work/IMG-20260608-WA0003.jpg',
-        'work/IMG-20260611-WA0008.jpg',
-        'work/IMG-20260617-WA0004 (1).jpg',
-        'work/IMG-20260617-WA0005 (1).jpg',
-        'work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg',
-        'work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg'
+        "work/ADDM.jpg",
+        "work/ADDM2.jpg",
+        "work/SKILLS5.jpg",
+        "work/SKILLS_POSTER.jpg",
+        "work/9.jpg",
+        "work/10.jpg",
+        "work/all_course.jpg",
+        "work/DM_ABOSOLUTE_.jpg",
+        "work/cyber_security_copy.jpg",
+        "work/GD_AND_VE.jpg",
+        "work/scene6.jpg",
+        "work/DM1_car.jpg",
+        "work/SKILLS__GTA.jpg",
+        "work/IMG-20260512-WA0004.jpg",
+        "work/IMG-20260512-WA0006.jpg",
+        "work/IMG-20260513-WA0004.jpg",
+        "work/IMG-20260515-WA0003.jpg",
+        "work/IMG-20260520-WA0001.jpg",
+        "work/IMG-20260520-WA0003.jpg",
+        "work/IMG-20260522-WA0019.jpg",
+        "work/IMG-20260522-WA0022.jpg",
+        "work/IMG-20260529-WA0002.jpg",
+        "work/IMG-20260529-WA0003.jpg",
+        "work/IMG-20260529-WA0005.jpg",
+        "work/IMG-20260530-WA0007.jpg",
+        "work/IMG-20260606-WA0003.jpg",
+        "work/IMG-20260608-WA0000.jpg",
+        "work/IMG-20260608-WA0001.jpg",
+        "work/IMG-20260608-WA0002.jpg",
+        "work/IMG-20260608-WA0003.jpg",
+        "work/IMG-20260611-WA0008.jpg",
+        "work/IMG-20260617-WA0004 (1).jpg",
+        "work/IMG-20260617-WA0005 (1).jpg",
+        "work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg",
+        "work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg"
     ];
 
-    const gravityStage  = document.getElementById('gravityStage');
-    const gravityTrack  = document.getElementById('gravityTrack');
+    const rowA = document.getElementById('rowA');
+    const rowB = document.getElementById('rowB');
+    const workDetails = [
+        { title: "Bench Talk", category: 'Graphic Design', description: "Bold yellow admission poster. A relaxed man on a wooden bench points straight at the viewer with a cup of tea, under a huge Malayalam headline about guaranteed work. Dark navy type on yellow keeps it loud and clear, with an AI-integrated digital marketing tag." },
+        { title: "Career Safe", category: 'Graphic Design', description: "Dark, moody poster with a person working on a laptop that shows a Meta Ads Manager dashboard. A white headline with a neon-green outline and a green highlight on the call to action give it a modern tech feel." },
+        { title: "Change Your Fate", category: 'Graphic Design', description: "Maroon poster with an angry 3D cartoon character holding a laptop, with lightning bolts around him. A punchy yellow Malayalam headline leads into the four courses on offer." },
+        { title: "Billboard in the Paddy Field", category: 'Graphic Design', description: "Cinematic Kerala paddy-field scene at dusk. A friendly cartoon boy on a green billboard introduces digital marketing and full-stack development. The warm orange shirt stands out against the green board." },
+        { title: "Don't Drown Without a Job", category: 'Graphic Design', description: "Split-scene poster: a man in a boat above the water, and a young man climbing a rock wall deep below. Rich ocean blues, large white Digital Marketing type and a neat course info strip." },
+        { title: "One Course Is Enough", category: 'Graphic Design', description: "Warm cream poster with an illustrated man in a striped traditional outfit, holding a small guitar. Rich brown Malayalam headline and a clear bulleted list of the courses." },
+        { title: "Don't Fall Behind", category: 'Graphic Design', description: "Atmospheric dark-blue poster. A student with a backpack faces a crowd walking into the light. Bold Malayalam headline with a yellow highlight and a boxed Our Courses list." },
+        { title: "Digital Marketing in Black & White", category: 'Graphic Design', description: "Monochrome illustrated character with raised hands in front of social media app icons, outlined in bright yellow. Giant yellow DIGITAL MARKETING title and a 3-month course, training and internship box." },
+        { title: "Think Like a Hacker", category: 'Graphic Design', description: "Dark blue cyber security poster with a cat in a hoodie and sunglasses typing on a laptop. Glitch-style yellow HACKING headline and clear diploma details." },
+        { title: "A Skill That Never Leaves You", category: 'Graphic Design', description: "Bright blue sky and terrace scene with Photoshop and After Effects icons as cute characters hugging. Yellow Malayalam headline and a graphic design and video editing course box." },
+        { title: "Scene Maarum", category: 'Graphic Design', description: "Cinematic hall with a young man holding a diploma. Huge distressed 3D yellow title behind him and a Join Now box listing four courses." },
+        { title: "Fly Higher", category: 'Graphic Design', description: "Black background with a futuristic flying car on blue jets. Large yellow and white Malayalam and English headline, and a boxed list of all the courses." },
+        { title: "Learn Skills, Build Your Future", category: 'Graphic Design', description: "GTA-style poster. Friends with laptops lean on a red classic car in neon rain. Chunky game-style lettering and a boxed course list." },
+        { title: "Career Climb", category: 'Graphic Design', description: "Social media poster for a digital marketing diploma. A climber on a sunset cliff is pulled up by a helping hand, a visual metaphor for lifting your career. Warm orange sky, bold Malayalam headline and a clear Join Now button." },
+        { title: "Run Toward the Job", category: 'Graphic Design', description: "Admission poster built on motion. A man bursts out of a door holding his diploma, with glowing blue speed trails behind him and a family member watching. Electric blue light gives it a fast, energetic feel." },
+        { title: "Career in 6 Months", category: 'Graphic Design', description: "Playful poster with a college mascot relaxing on a sofa with a laptop, framed by a glowing neon ring. A rich purple palette and a bright pink footer make the 6-month course stand out." },
+        { title: "The Meta Mentor", category: 'Graphic Design', description: "Storytelling creative where a Meta-style character studies a man's hand with a magnifying glass. Warm candlelight and golden tones give it a calm, cinematic mood." },
+        { title: "Learn. Practice. Grow.", category: 'Graphic Design', description: "Warm cream poster with a confident portrait and a big highlighted 6-month diploma badge. A clean layout with strong Malayalam typography keeps the message easy to read." },
+        { title: "Your Career Goes Digital", category: 'Graphic Design', description: "Deep blue admission poster with a sharp, suited portrait. Google, Instagram and Facebook icons float around him to show the digital marketing focus." },
+        { title: "Open the Door to Your Future", category: 'Graphic Design', description: "A silhouette stands at a glowing doorway overlooking a city at dusk. Golden rim lighting and a dark interior create the feeling of a new opportunity opening." },
+        { title: "Digital Marketing Avatar", category: 'Graphic Design', description: "A friendly 3D cartoon avatar in sunglasses on a navy gradient. A bold light-blue title and an orange call-to-action button give it a modern, youth-friendly look." },
+        { title: "Marketing in the AI Era", category: 'Graphic Design', description: "A robot working on a laptop with Adobe-style app icons floating around it, on a deep space-blue background. Cyan Malayalam and English typography ties the course to technology." },
+        { title: "Skills Give You the Power", category: 'Graphic Design', description: "Dark, dramatic night scene where a lightning bolt strikes toward a lone figure in an open field. Glowing type carries the message with very little clutter." },
+        { title: "Lead the Digital Future", category: 'Graphic Design', description: "Robotic hands assemble a glowing puzzle piece in electric blue. A lime-green headline accent adds contrast and highlights the 6-month digital marketing course." },
+        { title: "Skills for a Better Career", category: 'Graphic Design', description: "Minimal, conceptual poster on a clean white background. A person sits leaning against a geometric sphere, with Malayalam type and a simple Enroll Now button." },
+        { title: "Logistics Job Guarantee", category: 'Graphic Design', description: "Bold red and white poster with an excited young man in a safety vest, hands on his cheeks. Clear course details, social icons and a prominent contact number for quick enquiries." },
+        { title: "Into the Light", category: 'Graphic Design', description: "Typographic concept artwork. A silhouette walks through a red tunnel of letters toward a bright light. No promotional text, purely a visual and mood piece." },
+        { title: "Questions Ahead", category: 'Graphic Design', description: "A 3D cartoon character sips coffee while reporters' microphones crowd in. A funny, relatable scenario on a bright orange background that leads into the digital marketing course." },
+        { title: "Neon Meta Loop", category: 'Graphic Design', description: "A glossy lime-green 3D Meta symbol on a dark green floor, with a tiny worker sitting beside it. A bold yellow headline and a neon palette give it a strong tech feel." },
+        { title: "Steps to Success", category: 'Graphic Design', description: "A young man with a backpack climbs steps toward a glowing doorway with a graduation cap floating above. Warm amber light and a clear Join Now box keep the story simple." },
+        { title: "Montessori Teacher Training", category: 'Graphic Design', description: "Bright blue education poster with a smiling woman in a saree pointing to the course highlights. Paper-plane icons and neat info boxes make the key points scannable." },
+        { title: "Container to Future", category: 'Graphic Design', description: "Moody warehouse scene with a silhouette standing in front of a LOGISTICS container. Bold white headline, dark tones and clear enrolment details for the 6-month course." },
+        { title: "A Smarter Mindset", category: 'Graphic Design', description: "Warm-toned office hall with a man opening his arms in front of people at computers. Strong Malayalam headline text sells the digital marketing course." },
+        { title: "Logistics Management Diploma", category: 'Graphic Design', description: "Variation of the logistics job poster with a certificate and 100% placement support callouts, plus a footer bar with the institute location and a contact number." },
+        { title: "Container to Future (Variant)", category: 'Graphic Design', description: "Alternate version of the container poster. It adds an Enroll Now line with the phone number and location, keeping the same dark, cinematic look." }
+    ];
 
-    if (!gravityTrack) return; // guard
-
-    const N = gravityPhotos.length;
-    const BUFFER_SIZE = 3;
-
-    // -- Sizing Configuration (sync with CSS variables) --
-    function getLayoutMetrics() {
-        const w = window.innerWidth;
-        if (w <= 768) {
-            return { cardWidth: 200, cardSpacing: 230, cardMargin: 15 };
-        }
-        return { cardWidth: 280, cardSpacing: 320, cardMargin: 20 };
-    }
-
-    // -- Animation & Scroll State --
-    let currentX = 0;   // smoothed scroll index
-    let targetX  = 0;   // target scroll index
-    let rafId    = null;
-
-    // -- Interaction States --
-    let isHovered  = false;
-    let isDragging = false;
-    let isTouched  = false;
-
-    // -- Generate portfolio cards (with cloning for infinite endless loop) --
-    function buildGravityCards() {
-        gravityTrack.innerHTML = '';
-        const totalItems = [];
-
-        // 1. Prepend clones of last BUFFER_SIZE items
-        for (let j = N - BUFFER_SIZE; j < N; j++) {
-            totalItems.push({ src: gravityPhotos[j], index: j });
-        }
-        // 2. Real items
-        for (let j = 0; j < N; j++) {
-            totalItems.push({ src: gravityPhotos[j], index: j });
-        }
-        // 3. Append clones of first BUFFER_SIZE items
-        for (let j = 0; j < BUFFER_SIZE; j++) {
-            totalItems.push({ src: gravityPhotos[j], index: j });
-        }
-
-        totalItems.forEach((item, i) => {
-            const card = document.createElement('div');
-            card.className = 'gravity-card';
-            card.dataset.index = item.index;
-
-            const inner = document.createElement('div');
-            inner.className = 'gravity-card-inner';
-
-            const media = document.createElement('div');
-            media.className = 'gravity-card-media';
-
-            const img = document.createElement('img');
-            img.src = item.src;
-            img.alt = `Portfolio Work ${item.index + 1}`;
-            img.loading = 'lazy';
-
-            const overlay = document.createElement('div');
-            overlay.className = 'gravity-card-overlay';
-
-            const glass = document.createElement('div');
-            glass.className = 'gravity-card-glass';
-
-            media.appendChild(img);
-            inner.appendChild(media);
-            inner.appendChild(overlay);
-            inner.appendChild(glass);
-            card.appendChild(inner);
-
-            // Click-to-center functionality
-            card.addEventListener('click', () => {
-                if (card.classList.contains('is-left') || card.classList.contains('is-right')) {
-                    targetX = i - BUFFER_SIZE;
-                    startAnimate();
+    if (rowA && rowB) {
+        const half = Math.ceil(gravityPhotos.length / 2);
+        function fillRow(row, offset, count) {
+            for (let k = 0; k < 2; k++) {
+                for (let n = 0; n < count; n++) {
+                    const idx = offset + n;
+                    const card = document.createElement('div');
+                    card.className = 'row-card';
+                    card.tabIndex = 0;
+                    const img = document.createElement('img');
+                    img.src = gravityPhotos[idx];
+                    img.alt = workDetails[idx].title;
+                    img.draggable = false;
+                    card.appendChild(img);
+                    card.addEventListener('click', () => openWork(idx));
+                    card.addEventListener('keydown', e => { if (e.key === 'Enter') openWork(idx); });
+                    row.appendChild(card);
                 }
-            });
-
-            gravityTrack.appendChild(card);
-        });
-    }
-
-    buildGravityCards();
-
-    // -- Update track translation and card states --
-    function updateGalleryTrack() {
-        const { cardWidth, cardSpacing, cardMargin } = getLayoutMetrics();
-        const stageWidth = gravityStage.clientWidth || window.innerWidth;
-
-        // Perform infinite wrap-around checks
-        while (currentX >= N) {
-            currentX -= N;
-            targetX -= N;
-        }
-        while (currentX < 0) {
-            currentX += N;
-            targetX += N;
-        }
-
-        // Translate the track using relative DOM indices: domX = currentX + BUFFER_SIZE
-        const domX = currentX + BUFFER_SIZE;
-        const tx = (stageWidth / 2) - (domX * cardSpacing) - cardMargin - (cardWidth / 2);
-        gravityTrack.style.transform = `translateX(${tx}px)`;
-
-        // Identify center and flanking cards (by DOM index)
-        const centerDomIdx = Math.round(domX);
-        const cards = gravityTrack.querySelectorAll('.gravity-card');
-
-        cards.forEach((card, idx) => {
-            card.classList.remove('is-center', 'is-left', 'is-right');
-            if (idx === centerDomIdx) {
-                card.classList.add('is-center');
-            } else if (idx === centerDomIdx - 1) {
-                card.classList.add('is-left');
-            } else if (idx === centerDomIdx + 1) {
-                card.classList.add('is-right');
             }
-        });
-    }
-
-    // Set initial layout
-    updateGalleryTrack();
-
-    // -- Animation Loop --
-    const autoplaySpeed = 0.0035; // continuous drift speed when idle
-
-    function animate() {
-        if (!isHovered && !isDragging && !isTouched) {
-            targetX += autoplaySpeed;
         }
+        fillRow(rowA, 0, half);
+        fillRow(rowB, half, gravityPhotos.length - half);
 
-        const diff = targetX - currentX;
-        
-        // Stop loop only when differences are zero AND autoplay is paused
-        if (Math.abs(diff) < 0.001 && (isHovered || isDragging || isTouched)) {
-            currentX = targetX;
-            updateGalleryTrack();
-            rafId = null;
-            return;
+        const wd = document.getElementById('workDetail');
+        const wdImg = wd.querySelector('.wd-img');
+        const wdBody = wd.querySelector('.wd-info');
+        let cur = 0;
+        function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+        function showWork(i) {
+            const total = gravityPhotos.length;
+            cur = (i + total) % total;
+            const d = workDetails[cur];
+            wdImg.src = gravityPhotos[cur];
+            const rows = [['Category', d.category]]
+                .filter(r => r[1]).map(r => '<div class="wd-row"><span>' + r[0] + '</span><strong>' + esc(r[1]) + '</strong></div>').join('');
+            wdBody.innerHTML = '<div class="wd-count">' + String(cur + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0') + '</div>'
+                + '<h3 class="wd-title">' + esc(d.title) + '</h3>'
+                + (d.description ? '<p class="wd-desc">' + esc(d.description) + '</p>' : '')
+                + '<div class="wd-rows">' + rows + '</div>';
         }
-
-        currentX += diff * 0.08; // smooth easing factor
-        updateGalleryTrack();
-        rafId = requestAnimationFrame(animate);
-    }
-
-    function startAnimate() {
-        if (!rafId) {
-            rafId = requestAnimationFrame(animate);
-        }
-    }
-
-    // Start autoplay loop automatically
-    startAnimate();
-
-    // -- Mouse interactions for hover & 3D tilt parallax --
-    if (gravityStage) {
-        gravityStage.addEventListener('mouseenter', () => {
-            isHovered = true;
-            gravityStage.classList.add('is-hovered');
-        });
-
-        gravityStage.addEventListener('mouseleave', () => {
-            isHovered = false;
-            gravityStage.classList.remove('is-hovered');
-            // Reset 3D tilt on all cards
-            const inners = gravityTrack.querySelectorAll('.gravity-card-inner');
-            inners.forEach(inner => {
-                inner.style.transform = '';
-            });
-            startAnimate(); // Resume autoplay loop
-        });
-
-        gravityStage.addEventListener('mousemove', (e) => {
-            // Apply independent 3D tilt to visible cards (center, left, right)
-            const activeCards = gravityTrack.querySelectorAll('.is-center, .is-left, .is-right');
-            activeCards.forEach(card => {
-                const cardRect = card.getBoundingClientRect();
-                const cardCenterX = cardRect.left + cardRect.width / 2;
-                const cardCenterY = cardRect.top + cardRect.height / 2;
-
-                const dx = e.clientX - cardCenterX;
-                const dy = e.clientY - cardCenterY;
-
-                // Relative mouse offset percent (-1 to 1)
-                const percentX = dx / (cardRect.width / 2);
-                const percentY = dy / (cardRect.height / 2);
-
-                // Elegant maximum tilt bounds
-                const tiltX = percentY * -8;
-                const tiltY = percentX * 10;
-
-                const inner = card.querySelector('.gravity-card-inner');
-                if (inner) {
-                    inner.style.transform = `rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateZ(10px)`;
-                }
-            });
-        });
-
-        // Wheel horizontal scroll interaction
-        gravityStage.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            
-            // Adjust scroll coordinate based on wheel delta
-            targetX += e.deltaY * 0.0035;
-            startAnimate();
-        }, { passive: false });
-    }
-
-    // -- Mouse Drag Interaction --
-    isDragging = false;
-    let dragStartX = 0;
-    let dragStartTargetX = 0;
-
-    if (gravityStage) {
-        gravityStage.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            dragStartX = e.clientX;
-            dragStartTargetX = targetX;
-            gravityStage.classList.add('is-dragging');
-            e.preventDefault();
+        function openWork(i) { showWork(i); wd.classList.add('open'); document.body.style.overflow = 'hidden'; }
+        function closeWork() { wd.classList.remove('open'); document.body.style.overflow = ''; }
+        wd.querySelector('.wd-close').addEventListener('click', closeWork);
+        wd.querySelector('.wd-prev').addEventListener('click', () => showWork(cur - 1));
+        wd.querySelector('.wd-next').addEventListener('click', () => showWork(cur + 1));
+        wd.addEventListener('click', e => { if (e.target === wd || e.target.classList.contains('wd-stage')) closeWork(); });
+        document.addEventListener('keydown', e => {
+            if (!wd.classList.contains('open')) return;
+            if (e.key === 'Escape') closeWork();
+            if (e.key === 'ArrowLeft') showWork(cur - 1);
+            if (e.key === 'ArrowRight') showWork(cur + 1);
         });
     }
 
-    window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        const dx = e.clientX - dragStartX;
-        const { cardSpacing } = getLayoutMetrics();
 
-        // Convert drag offset into target index shift
-        targetX = dragStartTargetX - (dx / cardSpacing);
-        startAnimate();
-    });
-
-    window.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-            gravityStage.classList.remove('is-dragging');
-            // Settle / snap to nearest card index
-            targetX = Math.round(targetX);
-            startAnimate();
-        }
-    });
-
-    // -- Mobile Touch Interaction --
-    let touchStartX = 0;
-    let touchStartTargetX = 0;
-
-    if (gravityStage) {
-        gravityStage.addEventListener('touchstart', (e) => {
-            isTouched = true;
-            touchStartX = e.touches[0].clientX;
-            touchStartTargetX = targetX;
-            gravityStage.classList.add('is-hovered');
-        }, { passive: true });
-
-        gravityStage.addEventListener('touchmove', (e) => {
-            const dx = e.touches[0].clientX - touchStartX;
-            const { cardSpacing } = getLayoutMetrics();
-
-            targetX = touchStartTargetX - (dx / cardSpacing);
-            startAnimate();
-        }, { passive: true });
-
-        gravityStage.addEventListener('touchend', () => {
-            isTouched = false;
-            targetX = Math.round(targetX);
-            startAnimate();
-        }, { passive: true });
-    }
-
-    // -- Resize event re-aligning active metrics --
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            updateGalleryTrack();
-        }, 150);
-    });
-
-     // ===============================================
+    // ===============================================
     //  ULTRA-PREMIUM GLOWING CUSTOM CURSOR SYSTEM
     // ===============================================
 
@@ -802,3 +627,131 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
+(function () {
+    const svg = document.getElementById('penSvg');
+    if (!svg) return;
+    const path = document.getElementById('penPath');
+    const dot = document.getElementById('penDot');
+    // base points: A, B, C and the bezier handles
+    const P = { A: [70, 400], h1: [120, 120], h2: [320, 60], B: [330, 250], h3: [340, 440], h4: [420, 420], C: [440, 110] };
+    const els = {};
+    ['A', 'B', 'C'].forEach(k => els[k] = document.getElementById('pt' + k));
+    ['h1', 'h2', 'h3', 'h4'].forEach(k => els[k] = document.getElementById('hd' + k));
+    const lines = { l1: document.getElementById('ln1'), l2: document.getElementById('ln2'), l3: document.getElementById('ln3') };
+    let mx = 0, my = 0, tx = 0, ty = 0;
+    window.addEventListener('pointermove', e => {
+        const r = svg.getBoundingClientRect();
+        tx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width)));
+        ty = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height)));
+    });
+    let visible = true;
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(svg);
+    function draw(t) {
+        requestAnimationFrame(draw);
+        if (!visible || document.hidden) return;
+        t /= 1000;
+        mx += (tx - mx) * 0.06; my += (ty - my) * 0.06;
+        const q = {};
+        const wob = [[0, 0], [0.9, 0.7], [1.7, 1.1], [2.3, 0.4], [3.1, 1.4], [3.9, 0.9], [4.6, 0.6]];
+        Object.keys(P).forEach((k, i) => {
+            const amp = /^h/.test(k) ? 14 : 5;
+            q[k] = [P[k][0] + Math.sin(t * 0.8 + wob[i][0]) * amp + mx * (k === 'B' || k === 'h2' || k === 'h3' ? 26 : 12),
+                    P[k][1] + Math.cos(t * 0.7 + wob[i][1]) * amp + my * (k === 'B' || k === 'h2' || k === 'h3' ? 26 : 12)];
+        });
+        path.setAttribute('d', 'M' + q.A + ' C' + q.h1 + ' ' + q.h2 + ' ' + q.B + ' S' + q.h4 + ' ' + q.C);
+        // S reflects h2 about B; keep handle h3 on the mirrored point so the UI matches the curve
+        const rx = 2 * q.B[0] - q.h2[0], ry = 2 * q.B[1] - q.h2[1];
+        q.h3 = [rx, ry];
+        ['A', 'B', 'C'].forEach(k => { els[k].setAttribute('transform', 'translate(' + q[k][0] + ' ' + q[k][1] + ')'); });
+        ['h1', 'h2', 'h3', 'h4'].forEach(k => { els[k].setAttribute('cx', q[k][0]); els[k].setAttribute('cy', q[k][1]); });
+        const L = (el, a, b) => { el.setAttribute('x1', a[0]); el.setAttribute('y1', a[1]); el.setAttribute('x2', b[0]); el.setAttribute('y2', b[1]); };
+        L(lines.l1, q.A, q.h1); L(lines.l2, q.h2, q.h3); L(lines.l3, q.C, q.h4);
+        const len = path.getTotalLength();
+        const p = path.getPointAtLength(((t * 0.08) % 1) * len);
+        dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+    }
+    requestAnimationFrame(draw);
+})();
+
+(function () {
+    const btn = document.getElementById('menuBtn'), nav = document.getElementById('mainNav');
+    if (!btn || !nav) return;
+    const set = (open) => { nav.classList.toggle('open', open); btn.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); };
+    btn.addEventListener('click', () => set(!nav.classList.contains('open')));
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => set(false)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+    document.addEventListener('click', e => { if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) set(false); });
+})();
+
+(function () {
+    const t = document.getElementById('logoTrack');
+    if (!t) return;
+    Array.from(t.children).forEach(c => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); t.appendChild(k); });
+})();
+
+(function () {
+    const photos = [
+        "vehicles/MOTO_HEADS.jpg",
+        "vehicles/MOTO_ZONE_HONDA_.jpg",
+        "vehicles/MOTO_ZONE_HONDA.jpg",
+        "vehicles/MOTOZONE_HONDA.jpg",
+        "vehicles/as_yamaha.jpg",
+        "vehicles/as_yamaha2.jpg",
+        "vehicles/FORTUNE_YAMAHA_2_copy.jpg",
+        "vehicles/1.jpg",
+        "vehicles/2.jpg",
+        "vehicles/3.jpg",
+        "vehicles/AS_4.jpg",
+        "vehicles/AS_5.jpg",
+        "vehicles/3_1.jpg",
+        "vehicles/karath_tvs.jpg",
+        "vehicles/childerns_day.jpg",
+        "vehicles/YAMAHA.jpg"
+    ];
+    const details = [{"title": "Jupiter Booking Open", "category": "Vehicle Poster", "client": "Moto Heads Motors", "description": "TVS Jupiter launch poster. Two spectral-colour scooters stand on a pastel sunset terrace under a bold Malayalam headline, with a row of detail shots below and a red contact box in the footer."}, {"title": "Start the Ride in Style", "category": "Vehicle Poster", "client": "Motozone", "description": "Rainy night-city scene with a rider on a yellow and black Honda scooter. Huge yellow down payment and exchange bonus numbers, plus a side panel of free accessories."}, {"title": "ADV160 Launch", "category": "Vehicle Poster", "client": "Motozone", "description": "Four ADV160 colours lined up in front of glass towers. White italic headline, colour labels with leader lines and a clear price-starts-at badge."}, {"title": "ADV160 Bookings Open", "category": "Vehicle Poster", "client": "Motozone", "description": "A black ADV160 on a mountain road at sunrise. Black and red type with a Bookings Open Now tag, and four detail shots along the bottom."}, {"title": "Let the Roads Change", "category": "Vehicle Poster", "client": "AS Motors", "description": "Two Yamaha scooters on a coastal road under a cloudy sky. Blue offer boxes for cashback, zero down payment and mileage, with a finance strip at the bottom."}, {"title": "Offer Beyond Onam", "category": "Vehicle Poster", "client": "AS Motors", "description": "Onam-themed poster with Maveli, banana leaves and marigold garlands around two Yamaha scooters. Zero down payment and mileage badges keep the offer clear."}, {"title": "Kidilan Offer, Kidilan Ride", "category": "Vehicle Poster", "client": "Fortune Yamaha", "description": "Golden-hour road with a woman riding a mint Yamaha scooter. Big red down payment and cashback numbers on yellow boxes, with free delivery and finance points."}, {"title": "A New Style for Your Journeys", "category": "Vehicle Poster", "client": "AS Motors", "description": "Two scooters on a dusk city terrace with a giant golden 0 for zero down payment. Door delivery and quick loan approval tags sit around the vehicles."}, {"title": "More Distance, More Style", "category": "Vehicle Poster", "client": "AS Motors", "description": "Three Yamaha scooters in yellow, blue and grey on a moody dark-blue background. A zero down payment tag on the left and loan and delivery boxes at the bottom."}, {"title": "The Right Partner for Your Rides", "category": "Vehicle Poster", "client": "AS Motors", "description": "Two black Yamaha scooters in front of a city skyline, with a big red 0 for zero down payment against a blue-to-orange dusk sky."}, {"title": "New Ride, New Vibe", "category": "Vehicle Poster", "client": "AS Motors", "description": "Three Yamaha hybrid scooters on a vivid purple and blue neon stage. A hot-pink Zero Down Payment badge and a bold Malayalam and English headline."}, {"title": "Look Mass, Ride Class", "category": "Vehicle Poster", "client": "AS Motors", "description": "A rider on a Yamaha scooter in motion blur, with purple and blue night streaks. Tilted headline and a boxed zero down payment callout."}, {"title": "Make Your Dreams Yours", "category": "Vehicle Poster", "client": "Lekshmi Honda", "description": "A boy sleeping with a dream bubble showing a red Honda scooter. Glowing Malayalam headline, cash discount and down payment cards, and a free accessories strip."}, {"title": "A New Style for Your Journeys", "category": "Vehicle Poster", "client": "Karath TVS", "description": "Two Jupiter scooters at dusk with a giant golden 0. A strip of loan tenure, low interest and low EMI points sits below the vehicles."}, {"title": "Happy Children's Day", "category": "Vehicle Poster", "client": "Karath TVS", "description": "Festive poster with children gathered around a TVS Ronin motorcycle. Crayon-style rainbow lettering and a short, warm caption."}, {"title": "Journeys Will Continue", "category": "Vehicle Poster", "client": "Karath Motors", "description": "Three retro Yamaha motorcycles in red, grey and blue under split red and blue stage lighting. A big 9999 down payment box leads the poster."}];
+    const A = document.getElementById('rowC'), B = document.getElementById('rowD'), wd = document.getElementById('vehicleDetail');
+    if (!A || !B || !wd) return;
+    const half = Math.ceil(photos.length / 2);
+    function fill(row, offset, count) {
+        for (let k = 0; k < 2; k++) {
+            for (let n = 0; n < count; n++) {
+                const idx = offset + n;
+                const card = document.createElement('div');
+                card.className = 'row-card'; card.tabIndex = 0;
+                const img = document.createElement('img');
+                img.src = photos[idx]; img.alt = details[idx].title; img.draggable = false;
+                card.appendChild(img);
+                card.addEventListener('click', () => openV(idx));
+                card.addEventListener('keydown', e => { if (e.key === 'Enter') openV(idx); });
+                row.appendChild(card);
+            }
+        }
+    }
+    fill(A, 0, half); fill(B, half, photos.length - half);
+    A.style.animationDuration = '55s'; B.style.animationDuration = '62s';
+    const img = wd.querySelector('.wd-img'), info = wd.querySelector('.wd-info');
+    let cur = 0;
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    function show(i) {
+        cur = (i + photos.length) % photos.length;
+        const d = details[cur];
+        img.src = photos[cur];
+        const rows = [['Category', d.category], ['Client', d.client]].filter(r => r[1])
+            .map(r => '<div class="wd-row"><span>' + r[0] + '</span><strong>' + esc(r[1]) + '</strong></div>').join('');
+        info.innerHTML = '<div class="wd-count">' + String(cur + 1).padStart(2, '0') + ' / ' + String(photos.length).padStart(2, '0') + '</div>'
+            + '<h3 class="wd-title">' + esc(d.title) + '</h3><p class="wd-desc">' + esc(d.description) + '</p><div class="wd-rows">' + rows + '</div>';
+    }
+    function openV(i) { show(i); wd.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeV() { wd.classList.remove('open'); document.body.style.overflow = ''; }
+    wd.querySelector('.wd-close').addEventListener('click', closeV);
+    wd.querySelector('.wd-prev').addEventListener('click', () => show(cur - 1));
+    wd.querySelector('.wd-next').addEventListener('click', () => show(cur + 1));
+    wd.addEventListener('click', e => { if (e.target === wd || e.target.classList.contains('wd-stage')) closeV(); });
+    document.addEventListener('keydown', e => {
+        if (!wd.classList.contains('open')) return;
+        if (e.key === 'Escape') closeV();
+        if (e.key === 'ArrowLeft') show(cur - 1);
+        if (e.key === 'ArrowRight') show(cur + 1);
+    });
+})();
