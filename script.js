@@ -297,41 +297,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===============================================
 
     const gravityPhotos = [
-        "work/ADDM.jpg",
-        "work/ADDM2.jpg",
-        "work/SKILLS5.jpg",
-        "work/SKILLS_POSTER.jpg",
-        "work/9.jpg",
-        "work/10.jpg",
-        "work/all_course.jpg",
-        "work/DM_ABOSOLUTE_.jpg",
-        "work/cyber_security_copy.jpg",
-        "work/GD_AND_VE.jpg",
-        "work/scene6.jpg",
-        "work/DM1_car.jpg",
-        "work/SKILLS__GTA.jpg",
-        "work/IMG-20260512-WA0004.jpg",
-        "work/IMG-20260512-WA0006.jpg",
-        "work/IMG-20260513-WA0004.jpg",
-        "work/IMG-20260515-WA0003.jpg",
-        "work/IMG-20260520-WA0001.jpg",
-        "work/IMG-20260520-WA0003.jpg",
-        "work/IMG-20260522-WA0019.jpg",
-        "work/IMG-20260522-WA0022.jpg",
-        "work/IMG-20260529-WA0002.jpg",
-        "work/IMG-20260529-WA0003.jpg",
-        "work/IMG-20260529-WA0005.jpg",
-        "work/IMG-20260530-WA0007.jpg",
-        "work/IMG-20260606-WA0003.jpg",
-        "work/IMG-20260608-WA0000.jpg",
-        "work/IMG-20260608-WA0001.jpg",
-        "work/IMG-20260608-WA0002.jpg",
-        "work/IMG-20260608-WA0003.jpg",
-        "work/IMG-20260611-WA0008.jpg",
-        "work/IMG-20260617-WA0004 (1).jpg",
-        "work/IMG-20260617-WA0005 (1).jpg",
-        "work/WhatsApp Image 2026-06-09 at 3.43.52 PM.jpeg",
-        "work/WhatsApp Image 2026-06-17 at 5.00.22 PM.jpeg"
+        "w_ADDM.jpg",
+        "w_ADDM2.jpg",
+        "w_SKILLS5.jpg",
+        "w_SKILLS_POSTER.jpg",
+        "w_9.jpg",
+        "w_10.jpg",
+        "w_all_course.jpg",
+        "w_DM_ABOSOLUTE_.jpg",
+        "w_cyber_security_copy.jpg",
+        "w_GD_AND_VE.jpg",
+        "w_scene6.jpg",
+        "w_DM1_car.jpg",
+        "w_SKILLS__GTA.jpg",
+        "w_old_01.jpg",
+        "w_old_02.jpg",
+        "w_old_03.jpg",
+        "w_old_04.jpg",
+        "w_old_05.jpg",
+        "w_old_06.jpg",
+        "w_old_07.jpg",
+        "w_old_08.jpg",
+        "w_old_09.jpg",
+        "w_old_10.jpg",
+        "w_old_11.jpg",
+        "w_old_12.jpg",
+        "w_old_13.jpg",
+        "w_old_14.jpg",
+        "w_old_15.jpg",
+        "w_old_16.jpg",
+        "w_old_17.jpg",
+        "w_old_18.jpg",
+        "w_old_19.jpg",
+        "w_old_20.jpg",
+        "w_old_21.jpeg",
+        "w_old_22.jpeg"
     ];
 
     const rowA = document.getElementById('rowA');
@@ -629,49 +629,112 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 (function () {
-    const svg = document.getElementById('penSvg');
-    if (!svg) return;
-    const path = document.getElementById('penPath');
-    const dot = document.getElementById('penDot');
-    // base points: A, B, C and the bezier handles
-    const P = { A: [70, 400], h1: [120, 120], h2: [320, 60], B: [330, 250], h3: [340, 440], h4: [420, 420], C: [440, 110] };
-    const els = {};
-    ['A', 'B', 'C'].forEach(k => els[k] = document.getElementById('pt' + k));
-    ['h1', 'h2', 'h3', 'h4'].forEach(k => els[k] = document.getElementById('hd' + k));
-    const lines = { l1: document.getElementById('ln1'), l2: document.getElementById('ln2'), l3: document.getElementById('ln3') };
-    let mx = 0, my = 0, tx = 0, ty = 0;
-    window.addEventListener('pointermove', e => {
-        const r = svg.getBoundingClientRect();
-        tx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width)));
-        ty = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height)));
-    });
-    let visible = true;
-    if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(svg);
-    function draw(t) {
-        requestAnimationFrame(draw);
-        if (!visible || document.hidden) return;
-        t /= 1000;
-        mx += (tx - mx) * 0.06; my += (ty - my) * 0.06;
-        const q = {};
-        const wob = [[0, 0], [0.9, 0.7], [1.7, 1.1], [2.3, 0.4], [3.1, 1.4], [3.9, 0.9], [4.6, 0.6]];
-        Object.keys(P).forEach((k, i) => {
-            const amp = /^h/.test(k) ? 14 : 5;
-            q[k] = [P[k][0] + Math.sin(t * 0.8 + wob[i][0]) * amp + mx * (k === 'B' || k === 'h2' || k === 'h3' ? 26 : 12),
-                    P[k][1] + Math.cos(t * 0.7 + wob[i][1]) * amp + my * (k === 'B' || k === 'h2' || k === 'h3' ? 26 : 12)];
-        });
-        path.setAttribute('d', 'M' + q.A + ' C' + q.h1 + ' ' + q.h2 + ' ' + q.B + ' S' + q.h4 + ' ' + q.C);
-        // S reflects h2 about B; keep handle h3 on the mirrored point so the UI matches the curve
-        const rx = 2 * q.B[0] - q.h2[0], ry = 2 * q.B[1] - q.h2[1];
-        q.h3 = [rx, ry];
-        ['A', 'B', 'C'].forEach(k => { els[k].setAttribute('transform', 'translate(' + q[k][0] + ' ' + q[k][1] + ')'); });
-        ['h1', 'h2', 'h3', 'h4'].forEach(k => { els[k].setAttribute('cx', q[k][0]); els[k].setAttribute('cy', q[k][1]); });
-        const L = (el, a, b) => { el.setAttribute('x1', a[0]); el.setAttribute('y1', a[1]); el.setAttribute('x2', b[0]); el.setAttribute('y2', b[1]); };
-        L(lines.l1, q.A, q.h1); L(lines.l2, q.h2, q.h3); L(lines.l3, q.C, q.h4);
-        const len = path.getTotalLength();
-        const p = path.getPointAtLength(((t * 0.08) % 1) * len);
-        dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+    const el = document.getElementById('hero3d');
+    if (!el || !window.THREE) { if (el) el.style.display = 'none'; return; }
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); }
+    catch (e) { el.style.display = 'none'; return; }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    const cv = renderer.domElement;
+    cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block';
+    el.appendChild(cv);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 50);
+
+    // studio reflections
+    (function () {
+        const pm = new THREE.PMREMGenerator(renderer), env = new THREE.Scene();
+        env.add(new THREE.Mesh(new THREE.SphereGeometry(30, 32, 16), new THREE.MeshBasicMaterial({ color: 0x0b1020, side: THREE.BackSide })));
+        const panel = (w, h, p, c) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.set(p[0], p[1], p[2]); m.lookAt(0, 0, 0); env.add(m); };
+        panel(14, 8, [6, 10, 12], new THREE.Color(5, 5, 5.2));
+        panel(8, 14, [-14, 2, 4], new THREE.Color(0.6, 1.4, 4.5));
+        panel(8, 14, [14, 0, -4], new THREE.Color(4, 0.8, 2.2));
+        panel(20, 6, [0, 14, -8], new THREE.Color(2, 2, 2.4));
+        scene.environment = pm.fromScene(env, 0.03).texture; pm.dispose();
+    })();
+    scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+    const key = new THREE.DirectionalLight(0xffffff, 1.0); key.position.set(4, 6, 7); scene.add(key);
+    const lb = new THREE.PointLight(0x3b82f6, 1.6, 24); lb.position.set(-5, 2, 3); scene.add(lb);
+    const lp = new THREE.PointLight(0xff4fa3, 1.2, 24); lp.position.set(5, -2, 3); scene.add(lp);
+
+    // one mesh whose vertices morph between convex shapes
+    const geo = new THREE.IcosahedronGeometry(1, 24);
+    const pa = geo.attributes.position, n = pa.count;
+    const dirs = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+        const x = pa.getX(i), y = pa.getY(i), z = pa.getZ(i), l = Math.hypot(x, y, z) || 1;
+        dirs[i * 3] = x / l; dirs[i * 3 + 1] = y / l; dirs[i * 3 + 2] = z / l;
     }
-    requestAnimationFrame(draw);
+    const norm = v => { const l = Math.hypot(v[0], v[1], v[2]); return [v[0] / l, v[1] / l, v[2] / l]; };
+    const planar = (normals, h) => (x, y, z) => {
+        let r = 1e9;
+        for (const q of normals) { const d = q[0] * x + q[1] * y + q[2] * z; if (d > 1e-6) { const v = h / d; if (v < r) r = v; } }
+        return r;
+    };
+    const cubeN = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+    const tetN = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]].map(norm);
+    const octN = []; [1, -1].forEach(a => [1, -1].forEach(b => [1, -1].forEach(c => octN.push(norm([a, b, c])))));
+    const shapes = [
+        { f: planar(cubeN, 0.8), c: 0x3b82f6 },
+        { f: planar(tetN, 0.45), c: 0xff4fa3 },
+        { f: () => 1.1, c: 0x10b981 },
+        { f: planar(octN, 0.78), c: 0xf59e0b },
+        { f: (x, y, z) => { const rr = Math.hypot(x, z); let r = 1e9; if (rr > 1e-6) r = Math.min(r, 0.95 / rr); if (Math.abs(y) > 1e-6) r = Math.min(r, 0.95 / Math.abs(y)); return r; }, c: 0x7c5cff }
+    ];
+    const T = shapes.map(s => {
+        const a = new Float32Array(n * 3);
+        for (let i = 0; i < n; i++) {
+            const x = dirs[i * 3], y = dirs[i * 3 + 1], z = dirs[i * 3 + 2], r = s.f(x, y, z);
+            a[i * 3] = x * r; a[i * 3 + 1] = y * r; a[i * 3 + 2] = z * r;
+        }
+        return a;
+    });
+    const cols = shapes.map(s => new THREE.Color(s.c));
+    const mat = new THREE.MeshPhysicalMaterial({ color: 0x3b82f6, metalness: 0.35, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.15, flatShading: true });
+    const mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false;
+    const group = new THREE.Group(); group.add(mesh); scene.add(group);
+    const P = pa.array;
+    function blend(a, b, e) {
+        const A = T[a], B = T[b];
+        for (let i = 0; i < P.length; i++) P[i] = A[i] + (B[i] - A[i]) * e;
+        pa.needsUpdate = true;
+        mat.color.copy(cols[a]).lerp(cols[b], e);
+    }
+    blend(0, 0, 0);
+
+    function resize() {
+        const w = el.clientWidth || 400, h = el.clientHeight || 400;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.position.set(0, 0, camera.aspect < 0.9 ? 8.5 : 7);
+        camera.lookAt(0, 0, 0); camera.updateProjectionMatrix();
+    }
+    resize(); window.addEventListener('resize', resize);
+
+    let tx = 0, ty = 0, mx = 0, my = 0, visible = true, held = 0;
+    window.addEventListener('pointermove', e => { tx = (e.clientX / window.innerWidth - 0.5) * 2; ty = (e.clientY / window.innerHeight - 0.5) * 2; });
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(el);
+    const HOLD = 2.4, MORPH = 1.8, CYC = HOLD + MORPH, clock = new THREE.Clock();
+    const ease = x => x * x * (3 - 2 * x);
+    (function tick() {
+        requestAnimationFrame(tick);
+        if (!visible || document.hidden) return;
+        const t = clock.getElapsedTime();
+        mx += (tx - mx) * 0.06; my += (ty - my) * 0.06;
+        const k = Math.floor(t / CYC), loc = t % CYC, a = k % shapes.length, b = (k + 1) % shapes.length;
+        if (loc >= HOLD) { blend(a, b, ease((loc - HOLD) / MORPH)); held = -1; }
+        else if (held !== a) { blend(a, a, 0); held = a; }
+        const s = Math.max(0.001, Math.min(1, (t - 2.2) / 0.9));
+        group.scale.setScalar(1 + 2.7 * Math.pow(s - 1, 3) + 1.7 * Math.pow(s - 1, 2));
+        group.rotation.y = t * 0.45 + mx * 0.6;
+        group.rotation.x = 0.35 + Math.sin(t * 0.5) * 0.15 + my * 0.4;
+        group.position.y = Math.sin(t * 1.3) * 0.1;
+        renderer.render(scene, camera);
+    })();
 })();
 
 (function () {
@@ -692,22 +755,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 (function () {
     const photos = [
-        "vehicles/MOTO_HEADS.jpg",
-        "vehicles/MOTO_ZONE_HONDA_.jpg",
-        "vehicles/MOTO_ZONE_HONDA.jpg",
-        "vehicles/MOTOZONE_HONDA.jpg",
-        "vehicles/as_yamaha.jpg",
-        "vehicles/as_yamaha2.jpg",
-        "vehicles/FORTUNE_YAMAHA_2_copy.jpg",
-        "vehicles/1.jpg",
-        "vehicles/2.jpg",
-        "vehicles/3.jpg",
-        "vehicles/AS_4.jpg",
-        "vehicles/AS_5.jpg",
-        "vehicles/3_1.jpg",
-        "vehicles/karath_tvs.jpg",
-        "vehicles/childerns_day.jpg",
-        "vehicles/YAMAHA.jpg"
+        "v_MOTO_HEADS.jpg",
+        "v_MOTO_ZONE_HONDA_.jpg",
+        "v_MOTO_ZONE_HONDA.jpg",
+        "v_MOTOZONE_HONDA.jpg",
+        "v_as_yamaha.jpg",
+        "v_as_yamaha2.jpg",
+        "v_FORTUNE_YAMAHA_2_copy.jpg",
+        "v_1.jpg",
+        "v_2.jpg",
+        "v_3.jpg",
+        "v_AS_4.jpg",
+        "v_AS_5.jpg",
+        "v_3_1.jpg",
+        "v_karath_tvs.jpg",
+        "v_childerns_day.jpg",
+        "v_YAMAHA.jpg"
     ];
     const details = [{"title": "Jupiter Booking Open", "category": "Vehicle Poster", "client": "Moto Heads Motors", "description": "TVS Jupiter launch poster. Two spectral-colour scooters stand on a pastel sunset terrace under a bold Malayalam headline, with a row of detail shots below and a red contact box in the footer."}, {"title": "Start the Ride in Style", "category": "Vehicle Poster", "client": "Motozone", "description": "Rainy night-city scene with a rider on a yellow and black Honda scooter. Huge yellow down payment and exchange bonus numbers, plus a side panel of free accessories."}, {"title": "ADV160 Launch", "category": "Vehicle Poster", "client": "Motozone", "description": "Four ADV160 colours lined up in front of glass towers. White italic headline, colour labels with leader lines and a clear price-starts-at badge."}, {"title": "ADV160 Bookings Open", "category": "Vehicle Poster", "client": "Motozone", "description": "A black ADV160 on a mountain road at sunrise. Black and red type with a Bookings Open Now tag, and four detail shots along the bottom."}, {"title": "Let the Roads Change", "category": "Vehicle Poster", "client": "AS Motors", "description": "Two Yamaha scooters on a coastal road under a cloudy sky. Blue offer boxes for cashback, zero down payment and mileage, with a finance strip at the bottom."}, {"title": "Offer Beyond Onam", "category": "Vehicle Poster", "client": "AS Motors", "description": "Onam-themed poster with Maveli, banana leaves and marigold garlands around two Yamaha scooters. Zero down payment and mileage badges keep the offer clear."}, {"title": "Kidilan Offer, Kidilan Ride", "category": "Vehicle Poster", "client": "Fortune Yamaha", "description": "Golden-hour road with a woman riding a mint Yamaha scooter. Big red down payment and cashback numbers on yellow boxes, with free delivery and finance points."}, {"title": "A New Style for Your Journeys", "category": "Vehicle Poster", "client": "AS Motors", "description": "Two scooters on a dusk city terrace with a giant golden 0 for zero down payment. Door delivery and quick loan approval tags sit around the vehicles."}, {"title": "More Distance, More Style", "category": "Vehicle Poster", "client": "AS Motors", "description": "Three Yamaha scooters in yellow, blue and grey on a moody dark-blue background. A zero down payment tag on the left and loan and delivery boxes at the bottom."}, {"title": "The Right Partner for Your Rides", "category": "Vehicle Poster", "client": "AS Motors", "description": "Two black Yamaha scooters in front of a city skyline, with a big red 0 for zero down payment against a blue-to-orange dusk sky."}, {"title": "New Ride, New Vibe", "category": "Vehicle Poster", "client": "AS Motors", "description": "Three Yamaha hybrid scooters on a vivid purple and blue neon stage. A hot-pink Zero Down Payment badge and a bold Malayalam and English headline."}, {"title": "Look Mass, Ride Class", "category": "Vehicle Poster", "client": "AS Motors", "description": "A rider on a Yamaha scooter in motion blur, with purple and blue night streaks. Tilted headline and a boxed zero down payment callout."}, {"title": "Make Your Dreams Yours", "category": "Vehicle Poster", "client": "Lekshmi Honda", "description": "A boy sleeping with a dream bubble showing a red Honda scooter. Glowing Malayalam headline, cash discount and down payment cards, and a free accessories strip."}, {"title": "A New Style for Your Journeys", "category": "Vehicle Poster", "client": "Karath TVS", "description": "Two Jupiter scooters at dusk with a giant golden 0. A strip of loan tenure, low interest and low EMI points sits below the vehicles."}, {"title": "Happy Children's Day", "category": "Vehicle Poster", "client": "Karath TVS", "description": "Festive poster with children gathered around a TVS Ronin motorcycle. Crayon-style rainbow lettering and a short, warm caption."}, {"title": "Journeys Will Continue", "category": "Vehicle Poster", "client": "Karath Motors", "description": "Three retro Yamaha motorcycles in red, grey and blue under split red and blue stage lighting. A big 9999 down payment box leads the poster."}];
     const A = document.getElementById('rowC'), B = document.getElementById('rowD'), wd = document.getElementById('vehicleDetail');
