@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shibin | Graphic Designer</title>
+    <meta name="description" content="Portfolio of Shibin, a Graphic Designer specializing in visual identity and art direction.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Dancing+Script:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- INTRO -->
+    <div id="intro-overlay">
+        <div class="intro-panel intro-panel-left"></div>
+        <div class="intro-panel intro-panel-right"></div>
+        
+        <canvas id="intro-canvas"></canvas>
+        
+        <div class="intro-wrap">
+            <div class="intro-reveal-block">
+                <div class="intro-main-name">SHIBIN</div>
+            </div>
+            <div class="intro-reveal-block delay-1">
+                <div class="intro-studio-word">studio</div>
+            </div>
+            <div class="intro-reveal-block delay-2">
+                <div class="intro-tagline-word">Designer &nbsp;·&nbsp; Developer &nbsp;·&nbsp; Creator</div>
+            </div>
+        </div>
+        <div class="intro-progress"><div class="intro-progress-fill"></div></div>
+
+        <button id="skip-intro" aria-label="Skip Intro">
+            <span class="skip-text">Skip</span>
+            <svg class="skip-circle" width="56" height="56" viewBox="0 0 36 36">
+                <circle class="skip-circle-bg" cx="18" cy="18" r="16"></circle>
+                <circle class="skip-circle-fill" cx="18" cy="18" r="16"></circle>
+            </svg>
+        </button>
+    </div>
+
+    <!-- HEADER / NAV -->
+    <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <nav class="nav" id="mainNav">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#clients">Companies</a>
+            <a href="#projects">Vehicles</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <!-- MAIN HERO SECTION -->
+    <section class="hero" id="home">
+        <div id="snow-container"></div>
+        <div class="hero-3d" id="hero3d" aria-hidden="true">
+            <svg id="penSvg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="penGrad" x1="0" y1="1" x2="1" y2="0">
+                        <stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#ffffff"/>
+                    </linearGradient>
+                </defs>
+                <g class="pen-guides" stroke="rgba(255,255,255,.07)" stroke-width="1">
+                    <line x1="0" y1="250" x2="500" y2="250"/><line x1="250" y1="0" x2="250" y2="500"/>
+                    <circle cx="250" cy="250" r="210" fill="none"/>
+                </g>
+                <g class="pen-handles" stroke="rgba(59,130,246,.7)" stroke-width="1.2">
+                    <line id="ln1"/><line id="ln2"/><line id="ln3"/>
+                </g>
+                <path id="penPath" class="pen-path" pathLength="1" fill="none" stroke="url(#penGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                <g fill="#3b82f6">
+                    <circle id="hdh1" r="4.5"/><circle id="hdh2" r="4.5"/><circle id="hdh3" r="4.5"/><circle id="hdh4" r="4.5"/>
+                </g>
+                <g class="pen-anchors" fill="#000" stroke="#fff" stroke-width="1.6">
+                    <g id="ptA"><rect x="-6" y="-6" width="12" height="12"/></g>
+                    <g id="ptB"><rect x="-6" y="-6" width="12" height="12"/></g>
+                    <g id="ptC"><rect x="-6" y="-6" width="12" height="12"/></g>
+                </g>
+                <circle id="penDot" r="5" fill="#fff" class="pen-dot"/>
+            </svg>
+        </div>
+        <div class="hero-content">
+            <h1 class="hot-title">SHIBIN</h1>
+            <h2 class="hot-subtitle italic">Designer & Developer</h2>
+            <p class="hot-sub">Where Design Meets Vision.</p>
+            <div class="hero-socials-inline">
+                <a href="https://www.instagram.com/_a_c_h_u_30?igsh=bmxvcHhsb2xxNnk4" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+                <a href="https://wa.me/916282860945?text=HI" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.663-2.06-.173-.299-.018-.461.13-.611.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <div class="site-wrapper">
+        <main>
+
+
+            <!-- ABOUT SECTION -->
+            <section id="about" class="about" data-aos="fade-up">
+                <h2 class="section-title">About Me</h2>
+                <div class="about-content">
+                    <p class="about-text">
+                        Hello! I'm Shibin, a designer and self-taught developer. My journey in tech started with a profound curiosity for how things work, leading me to explore both the aesthetic and functional aspects of web creation. I am a passionate tech enthusiast who believes in continuous learning and pushing the boundaries of digital design.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- SKILLS SECTION -->
+            <section id="skills" class="skills" data-aos="fade-up">
+                <h2 class="section-title">Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-tag">UI/UX Design</div>
+                    <div class="skill-tag">Frontend Development</div>
+                    <div class="skill-tag">HTML & CSS</div>
+                    <div class="skill-tag">JavaScript</div>
+                    <div class="skill-tag">Responsive Design</div>
+                    <div class="skill-tag">Figma</div>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- SERVICES SECTION -->
+            <section id="clients" class="clients" data-aos="fade-up">
+                <h2 class="section-title">Companies</h2>
+                <div class="logo-marquee">
+                    <div class="logo-track" id="logoTrack">
+                        <div class="logo-card"><span class="co-name">Wealth Maxima</span></div>
+                        <div class="logo-card"><span class="co-name">Wealth Maxima Skills</span></div>
+                        <div class="logo-card"><span class="co-name">Altibix</span></div>
+                        <div class="logo-card"><span class="co-name">Multysence</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <!-- PROJECTS SECTION -->
+            <section id="projects" class="projects gallery-section" data-aos="fade-up">
+                <h2 class="section-title">Vehicles Poster</h2>
+                <div class="rows">
+                    <div class="row-marquee"><div class="row-track" id="rowC"></div></div>
+                    <div class="row-marquee"><div class="row-track rev" id="rowD"></div></div>
+                </div>
+                <div class="work-detail" id="vehicleDetail" role="dialog" aria-modal="true">
+                    <div class="wd-stage"><img class="wd-img" alt=""></div>
+                    <aside class="wd-side">
+                        <button class="wd-close" aria-label="Close">&times;</button>
+                        <div class="wd-info"></div>
+                        <div class="wd-nav">
+                            <button class="wd-prev" aria-label="Previous">&#8592;</button>
+                            <button class="wd-next" aria-label="Next">&#8594;</button>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <hr class="divider">            <!-- ANTI-GRAVITY GALLERY SECTION -->
+            <section id="gallery" class="gallery-section" data-aos="fade-up">
+                <h2 class="section-title">Work Gallery</h2>
+
+                <div class="rows" id="rows">
+                    <div class="row-marquee"><div class="row-track" id="rowA"></div></div>
+                    <div class="row-marquee"><div class="row-track rev" id="rowB"></div></div>
+                </div>
+                <div class="work-detail" id="workDetail" role="dialog" aria-modal="true">
+                    <div class="wd-stage"><img class="wd-img" alt=""></div>
+                    <aside class="wd-side">
+                        <button class="wd-close" aria-label="Close">&times;</button>
+                        <div class="wd-info"></div>
+                        <div class="wd-nav">
+                            <button class="wd-prev" aria-label="Previous">&#8592;</button>
+                            <button class="wd-next" aria-label="Next">&#8594;</button>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+
+            <section id="contact" class="contact" data-aos="fade-up">
+                <div class="contact-grid">
+                    <h2 class="section-title">Let's create something together.</h2>
+                    <div class="contact-details">
+                        <a href="mailto:achushibin003@gmail.com" class="email-link">achushibin003@gmail.com</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Shibin Studio.</p>
+            <p>All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
