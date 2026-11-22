@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shibin S — Pixcod & Falconz Boy | Creative Designer & Web Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07080d;
+      --surface: #0f121b;
+      --surface-2: #161b28;
+      --border: rgba(255, 255, 255, 0.09);
+      --gold: #e5b55c;
+      --gold-soft: rgba(229, 181, 92, 0.16);
+      --text: #f5f6fa;
+      --muted: #9aa4bc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Curtain Split Intro */
+    .curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      display: flex;
+    }
+    .curtain-half {
+      flex: 1;
+      background: #05060a;
+      border-right: 1px solid rgba(229, 181, 92, 0.25);
+      transition: transform 1.1s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    .curtain-half.right { border-right: none; border-left: 1px solid rgba(229, 181, 92, 0.25); }
+    body.loaded .curtain-half.left { transform: translateX(-100%); }
+    body.loaded .curtain-half.right { transform: translateX(100%); }
+
+    /* Custom Cursor (Desktop) */
+    .cursor-dot {
+      position: fixed;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffe4a3 0%, rgba(229,181,92,0) 72%);
+      pointer-events: none;
+      z-index: 998;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+      display: none;
+    }
+    @media (pointer: fine) { .cursor-dot { display: block; } }
+
+    /* Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 80;
+      backdrop-filter: blur(14px);
+      background: rgba(7, 8, 13, 0.78);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      font-size: 1.1rem;
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    @media (max-width: 680px) { .nav-links { display: none; } }
+
+    /* Hero Section with Zero-Flicker 3D Thapas */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 36px 24px 64px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 36px;
+      align-items: center;
+      min-height: calc(100vh - 68px);
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding-top: 20px; }
+    }
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(229, 181, 92, 0.35);
+      background: var(--gold-soft);
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.2rem, 4.6vw, 3.8rem);
+      line-height: 1.12;
+      margin-bottom: 18px;
+    }
+    h1 span { color: var(--gold); }
+    .hero-desc {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
+    .btn {
+      padding: 13px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--gold); color: #0a0b10; }
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .stage-wrap {
+      position: relative;
+      height: 480px;
+      border-radius: 24px;
+      background: radial-gradient(circle at 50% 35%, #161d31 0%, #090b12 78%);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    #hero3d { width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
+    #hero3d:active { cursor: grabbing; }
+    .drag-hint {
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: rgba(7, 8, 13, 0.75);
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      pointer-events: none;
+    }
+
+    /* Section Shared */
+    section.block {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 76px 24px;
+      border-top: 1px solid var(--border);
+    }
+    .sec-head { margin-bottom: 36px; }
+    .sec-head h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
+      margin-bottom: 8px;
+    }
+    .sec-head p { color: var(--muted); }
+
+    /* Interactive Skills Inspector */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 24px;
+    }
+    @media (max-width: 820px) { .skills-grid { grid-template-columns: 1fr; } }
+    .skill-tabs { display: flex; flex-direction: column; gap: 12px; }
+    .skill-tab {
+      text-align: left;
+      padding: 18px 20px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .skill-tab.active, .skill-tab:hover {
+      border-color: var(--gold);
+      background: var(--surface-2);
+    }
+    .skill-tab h3 { font-size: 1.05rem; margin-bottom: 4px; }
+    .skill-tab span { font-size: 0.84rem; color: var(--muted); }
+    .skill-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .skill-panel h3 { color: var(--gold); font-size: 1.35rem; margin-bottom: 12px; }
+    .skill-panel p { color: var(--muted); margin-bottom: 20px; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+    }
+
+    /* Marquee Strip */
+    .marquee-wrap {
+      overflow: hidden;
+      padding: 18px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: #0a0c14;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 48px;
+      width: max-content;
+      animation: marquee 24s linear infinite;
+    }
+    .marquee-item {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Work & Poster Showcase + Lightbox Modal */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .work-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .work-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+    .work-thumb {
+      height: 190px;
+      display: flex;
+      align-items: flex-end;
+      padding: 18px;
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .w1 { background: linear-gradient(135deg, #1b2845 0%, #274060 100%); }
+    .w2 { background: linear-gradient(135deg, #2b193d 0%, #48233c 100%); }
+    .w3 { background: linear-gradient(135deg, #14362d 0%, #1f5c4d 100%); }
+    .w4 { background: linear-gradient(135deg, #3a2314 0%, #6b3e1f 100%); }
+    .work-meta { padding: 18px; }
+    .work-meta h4 { margin-bottom: 4px; font-size: 1.02rem; }
+    .work-meta p { color: var(--muted); font-size: 0.86rem; }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(4, 5, 9, 0.86);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      max-width: 540px;
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid rgba(229, 181, 92, 0.35);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    .modal-box h3 { font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 10px; }
+    .modal-box p { color: var(--muted); margin-bottom: 20px; }
+
+    /* Contact Form */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+    @media (max-width: 780px) { .contact-card { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field label { font-size: 0.84rem; color: var(--muted); }
+    .field input, .field textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font: inherit;
+    }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--gold); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 300;
+      background: #14362d;
+      border: 1px solid #2e8b70;
+      color: #e6fff7;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      transform: translateY(140%);
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateY(0); }
+
+    /* Floating Sound Button */
+    .sound-btn {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      z-index: 150;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(229, 181, 92, 0.42);
+      background: rgba(12, 15, 24, 0.92);
+      color: #ffefc8;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+    .eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 13px; }
+    .eq i {
+      display: block;
+      width: 3px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+    .sound-btn.playing .eq i { animation: eqBounce 0.7s ease-in-out infinite alternate; }
+    .sound-btn.playing .eq i:nth-child(2) { animation-delay: 0.2s; }
+    .sound-btn.playing .eq i:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes eqBounce {
+      from { height: 4px; }
+      to { height: 13px; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px 20px 84px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="curtain">
+    <div class="curtain-half left"></div>
+    <div class="curtain-half right"></div>
+  </div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <header>
+    <div class="nav-inner">
+      <a href="#" class="brand">PIXCOD &bull; FALCONZ BOY</a>
+      <nav class="nav-links">
+        <a href="#skills">Skills</a>
+        <a href="#work">Selected Work</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Graphic Design &bull; Web Engineering &bull; Visuals</span>
+        <h1>Stillness in Focus, <span>Precision</span> in Craft.</h1>
+        <p class="hero-desc">
+          I'm Shibin (Pixcod / Falconz Boy) — crafting high-contrast digital interfaces, social brand campaigns, automotive posters, and atmospheric visual experiences from Kerala.
+        </p>
+        <div class="cta-row">
+          <a href="#work" class="btn btn-primary">Explore Selected Work</a>
+          <a href="#contact" class="btn btn-ghost">Start a Project</a>
+        </div>
+      </div>
+
+      <div class="stage-wrap">
+        <div id="hero3d"></div>
+        <div class="drag-hint">Drag horizontally to rotate 360&deg;</div>
+      </div>
+    </section>
+
+    <div class="marquee-wrap" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-item">BRAND IDENTITY &bull;</span>
+        <span class="marquee-item">AUTOMOTIVE POSTERS &bull;</span>
+        <span class="marquee-item">WEB APPLICATIONS &bull;</span>
+        <span class="marquee-item">PHOTOGRAPHY &bull;</span>
+        <span class="marquee-item">MOTION &amp; SOUND &bull;</span>
+        <span class="marquee-item">BRAND IDENTITY &bull;</span>
+        <span class="marquee-item">AUTOMOTIVE POSTERS &bull;</span>
+        <span class="marquee-item">WEB APPLICATIONS &bull;</span>
+        <span class="marquee-item">PHOTOGRAPHY &bull;</span>
+        <span class="marquee-item">MOTION &amp; SOUND &bull;</span>
+      </div>
+    </div>
+
+    <section class="block" id="skills">
+      <div class="sec-head">
+        <h2>Interactive Craft Inspector</h2>
+        <p>Select a discipline to inspect tools, workflow, and deliverables.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-tabs" id="skillTabs">
+          <button class="skill-tab active" data-skill="design" type="button">
+            <h3>Graphic &amp; Poster Design</h3>
+            <span>Social campaigns, vehicle posters &amp; brand visuals</span>
+          </button>
+          <button class="skill-tab" data-skill="web" type="button">
+            <h3>Interactive Web Development</h3>
+            <span>Mobile-first storefronts, 3D showcases &amp; web apps</span>
+          </button>
+          <button class="skill-tab" data-skill="photo" type="button">
+            <h3>Photography &amp; Direction</h3>
+            <span>Street, landscape &amp; mood framing</span>
+          </button>
+        </div>
+
+        <div class="skill-panel" id="skillPanel">
+          <div>
+            <h3 id="panelTitle">Graphic &amp; Poster Design</h3>
+            <p id="panelDesc">
+              High-impact promotional posters, automotive visuals, and recurring brand social creatives engineered for crisp mobile readability and strong visual hierarchy.
+            </p>
+          </div>
+          <div class="pill-row" id="panelPills">
+            <span class="pill">Adobe Photoshop</span>
+            <span class="pill">Adobe Illustrator</span>
+            <span class="pill">VN Video Editor</span>
+            <span class="pill">Brand Campaigns</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="work">
+      <div class="sec-head">
+        <h2>Selected Portfolio Archive</h2>
+        <p>Tap any project card to inspect details.</p>
+      </div>
+      <div class="work-grid">
+        <article class="work-card" data-title="Falconz Boy Photography" data-info="Curated dark-mode photography showcase featuring landscape, street, and mood frames with custom gallery transitions.">
+          <div class="work-thumb w1">FALCONZBOY.IN</div>
+          <div class="work-meta">
+            <h4>Photography Portfolio</h4>
+            <p>Web Design &bull; Visual Curation</p>
+          </div>
+        </article>
+        <article class="work-card" data-title="Automotive &amp; Vehicle Poster Series" data-info="High-contrast promotional posters crafted for motorcycle and automotive campaigns with dramatic lighting and clean typography.">
+          <div class="work-thumb w2">MOTOR SERIES</div>
+          <div class="work-meta">
+            <h4>Vehicle Poster Campaign</h4>
+            <p>Key Art &bull; Retouching</p>
+          </div>
+        </article>
+        <article class="work-card" data-title="Malayalis Storefront" data-info="Mobile-first Kerala food brand e-commerce storefront built for authentic coconut oil and traditional pickle collections.">
+          <div class="work-thumb w3">MALAYALIS STORE</div>
+          <div class="work-meta">
+            <h4>E-Commerce Experience</h4>
+            <p>UI/UX &bull; Storefront Build</p>
+          </div>
+        </article>
+        <article class="work-card" data-title="Pixcod Brand Creatives" data-info="Ongoing weekly visual design system producing social media posters and short-form promotional reels for regional clients.">
+          <div class="work-thumb w4">PIXCOD STUDIO</div>
+          <div class="work-meta">
+            <h4>Brand Creative Suite</h4>
+            <p>Identity &bull; Social Media</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" id="contact">
+      <div class="sec-head">
+        <h2>Start a Conversation</h2>
+        <p>Available for freelance design, posters, and custom web builds.</p>
+      </div>
+      <div class="contact-card">
+        <div>
+          <h3 style="font-family:'Cinzel',serif; color:var(--gold); margin-bottom:10px;">Pixcod Creative Studio</h3>
+          <p style="color:var(--muted); margin-bottom:18px;">
+            Based in Kollam, Kerala. Reach out for branding, promotional posters, or interactive websites.
+          </p>
+          <p style="font-size:0.9rem; color:var(--text);">Portfolio: falconzboy.in</p>
+        </div>
+        <form id="contactForm">
+          <div class="field">
+            <label for="cname">Your Name</label>
+            <input id="cname" type="text" required placeholder="Enter your name" />
+          </div>
+          <div class="field">
+            <label for="cmsg">Project Brief</label>
+            <textarea id="cmsg" rows="3" required placeholder="Tell me about your poster or website project..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Shibin S &bull; Pixcod &amp; Falconz Boy. All rights reserved.
+  </footer>
+
+  <!-- Project Modal -->
+  <div class="modal" id="workModal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <h3 id="modalTitle">Project Title</h3>
+      <p id="modalInfo">Project description.</p>
+      <button type="button" class="btn btn-primary" id="closeModal">Close Preview</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Message sent! I will get back to you soon.</div>
+
+  <!-- Floating Sound Control -->
+  <button id="soundToggle" class="sound-btn" type="button" aria-label="Toggle Background Audio">
+    <span class="eq"><i></i><i></i><i></i></span>
+    <span id="soundStatus">Sound: Tap Screen</span>
+  </button>
+
+  <audio id="bgMusic" src="OM Special Duty.mp3" loop preload="auto"></audio>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+    // 1. Curtain Intro & Custom Cursor
+    window.addEventListener('load', () => {
+      setTimeout(() => document.body.classList.add('loaded'), 180);
+    });
+    const dot = document.getElementById('cursorDot');
+    window.addEventListener('pointermove', (e) => {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+    }, { passive: true });
+
+    // 2. Interactive Skills Inspector
+    const skillData = {
+      design: {
+        title: 'Graphic & Poster Design',
+        desc: 'High-impact promotional posters, automotive visuals, and recurring brand social creatives engineered for crisp mobile readability and strong visual hierarchy.',
+        pills: ['Adobe Photoshop', 'Adobe Illustrator', 'VN Video Editor', 'Brand Campaigns']
+      },
+      web: {
+        title: 'Interactive Web Development',
+        desc: 'Fast, responsive, mobile-first websites and interactive 3D hero experiences built with clean modern architecture and smooth motion.',
+        pills: ['HTML / CSS / JS', 'Three.js 3D', 'Next.js & Vercel', 'Supabase & Firebase']
+      },
+      photo: {
+        title: 'Photography & Direction',
+        desc: 'Atmospheric street, landscape, and mood photography curated with minimal dark-gallery presentation and WebP performance optimization.',
+        pills: ['Street Framing', 'Landscape Moods', 'Color Grading', 'falconzboy.in']
+      }
+    };
+    document.querySelectorAll('.skill-tab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.skill-tab').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const item = skillData[btn.dataset.skill];
+        document.getElementById('panelTitle').textContent = item.title;
+        document.getElementById('panelDesc').textContent = item.desc;
+        document.getElementById('panelPills').innerHTML = item.pills.map((p) => `<span class="pill">${p}</span>`).join('');
+      });
+    });
+
+    // 3. Work Modal & Contact Toast
+    const modal = document.getElementById('workModal');
+    document.querySelectorAll('.work-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        document.getElementById('modalTitle').textContent = card.dataset.title;
+        document.getElementById('modalInfo').textContent = card.dataset.info;
+        modal.classList.add('open');
+      });
+    });
+    document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      e.target.reset();
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3200);
+    });
+
+    // 4. Continuous Looping Audio (OM Special Duty.mp3)
+    const audio = document.getElementById('bgMusic');
+    const soundBtn = document.getElementById('soundToggle');
+    const soundStatus = document.getElementById('soundStatus');
+    let audioUnlocked = false;
+
+    function syncAudioUI() {
+      if (audio.error) {
+        soundBtn.classList.remove('playing');
+        soundStatus.textContent = 'MP3 Not Found';
+        return;
+      }
+      if (!audio.paused) {
+        soundBtn.classList.add('playing');
+        soundStatus.textContent = 'Sound: On';
+      } else {
+        soundBtn.classList.remove('playing');
+        soundStatus.textContent = 'Sound: Off';
+      }
+    }
+
+    async function unlockAndPlay() {
+      try {
+        audio.muted = false;
+        await audio.play();
+        audioUnlocked = true;
+      } catch (_) {}
+      syncAudioUI();
+    }
+
+    audio.addEventListener('play', syncAudioUI);
+    audio.addEventListener('pause', syncAudioUI);
+    audio.addEventListener('error', syncAudioUI);
+
+    soundBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (audio.paused) {
+        await unlockAndPlay();
+      } else {
+        audio.pause();
+        syncAudioUI();
+      }
+    });
+
+    window.addEventListener('pointerdown', () => {
+      if (!audioUnlocked && audio.paused) unlockAndPlay();
+    }, { passive: true });
+
+    unlockAndPlay();
+
+    // 5. Zero-Flicker Solid 3D Padmasana Thapas Figure
+    const container = document.getElementById('hero3d');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      38,
+      container.clientWidth / Math.max(container.clientHeight, 1),
+      1,
+      30
+    );
+    camera.position.set(0, 1.15, 6.0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xdbe6ff, 1.2));
+    const keyLight = new THREE.DirectionalLight(0xffe4b5, 2.2);
+    keyLight.position.set(3, 5, 4);
+    scene.add(keyLight);
+    const rimLight = new THREE.DirectionalLight(0x7aa2ff, 0.95);
+    rimLight.position.set(-3, 2, -3);
+    scene.add(rimLight);
+
+    const sageGroup = new THREE.Group();
+    scene.add(sageGroup);
+
+    const robeMat = new THREE.MeshStandardMaterial({ color: 0x1c2b59, roughness: 0.62, metalness: 0.06 });
+    const trimMat = new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.32, metalness: 0.65 });
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xd89b72, roughness: 0.52, metalness: 0.02 });
+    const baseMat = new THREE.MeshStandardMaterial({ color: 0x15473c, roughness: 0.45, metalness: 0.15 });
+
+    // Lotus Pedestal
+    const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(1.32, 1.52, 0.24, 36), baseMat);
+    pedestal.position.set(0, -1.05, 0);
+    sageGroup.add(pedestal);
+
+    const goldRing = new THREE.Mesh(new THREE.TorusGeometry(1.34, 0.035, 12, 48), trimMat);
+    goldRing.rotation.x = Math.PI * 0.5;
+    goldRing.position.set(0, -0.92, 0);
+    sageGroup.add(goldRing);
+
+    // Full Crossed Padmasana Legs
+    const leftLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.21, 1.15, 12, 20), robeMat);
+    leftLeg.rotation.z = Math.PI * 0.46;
+    leftLeg.rotation.y = 0.22;
+    leftLeg.position.set(-0.12, -0.78, 0.24);
+    sageGroup.add(leftLeg);
+
+    const rightLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.21, 1.15, 12, 20), robeMat);
+    rightLeg.rotation.z = Math.PI * 0.54;
+    rightLeg.rotation.y = -0.22;
+    rightLeg.position.set(0.12, -0.68, 0.30);
+    sageGroup.add(rightLeg);
+
+    // Torso & Draped Gold Sash
+    const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.78, 16, 24), robeMat);
+    torso.position.set(0, -0.05, 0);
+    sageGroup.add(torso);
+
+    const sash = new THREE.Mesh(new THREE.TorusGeometry(0.41, 0.045, 12, 32), trimMat);
+    sash.rotation.x = Math.PI * 0.42;
+    sash.position.set(0, -0.25, 0.02);
+    sageGroup.add(sash);
+
+    // Arms & Dhyana Mudra Hands
+    const leftArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.58, 10, 16), robeMat);
+    leftArm.position.set(-0.46, -0.22, 0.22);
+    leftArm.rotation.x = 0.55;
+    leftArm.rotation.z = -0.25;
+    sageGroup.add(leftArm);
+
+    const rightArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.58, 10, 16), robeMat);
+    rightArm.position.set(0.46, -0.22, 0.22);
+    rightArm.rotation.x = 0.55;
+    rightArm.rotation.z = 0.25;
+    sageGroup.add(rightArm);
+
+    const handL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), skinMat);
+    handL.position.set(-0.16, -0.54, 0.46);
+    sageGroup.add(handL);
+
+    const handR = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), skinMat);
+    handR.position.set(0.16, -0.54, 0.46);
+    sageGroup.add(handR);
+
+    // Head & Jata Topknot
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 24), skinMat);
+    head.position.set(0, 0.78, 0.04);
+    sageGroup.add(head);
+
+    const topknot = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), trimMat);
+    topknot.position.set(0, 1.12, 0.02);
+    sageGroup.add(topknot);
+
+    // 360 Horizontal Drag Rotation
+    let dragging = false;
+    let prevX = 0;
+    let targetRotY = 0;
+
+    renderer.domElement.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      prevX = e.clientX;
+    });
+    window.addEventListener('pointerup', () => { dragging = false; });
+    window.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - prevX;
+      prevX = e.clientX;
+      targetRotY += dx * 0.012;
+    });
+
+    window.addEventListener('resize', () => {
+      if (!container.clientWidth || !container.clientHeight) return;
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      sageGroup.rotation.y += (targetRotY - sageGroup.rotation.y) * 0.1;
+      sageGroup.position.y = Math.sin(t * 1.4) * 0.05;
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
