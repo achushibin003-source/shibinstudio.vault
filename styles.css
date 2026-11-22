@@ -1393,3 +1393,21 @@ section{padding:4rem 0 5rem}
 
 .divider,hr{display:none!important}
 .gallery-section{background-image:none!important}
+
+.co-logo{height:52px;width:auto;max-width:86%;display:block;filter:brightness(0) invert(1);opacity:1;transition:filter .4s,opacity .4s}
+.logo-card:hover .co-logo{filter:none;opacity:1}
+.logo-card.light:hover{background:#fff;border-color:#fff}
+.logo-card:hover .co-name{color:#3b82f6}
+.co-name{transition:color .4s}
+@media(max-width:600px){.co-logo{height:30px}}
+
+.hero-3d{pointer-events:auto}
+@media(max-width:768px){.hero-3d{min-height:360px}}
+
+.music-btn{position:fixed;left:16px;bottom:16px;z-index:10050;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;overflow:hidden}
+.music-btn .bars{display:flex;align-items:flex-end;gap:3px;height:16px}
+.music-btn .bars i{display:block;width:3px;height:100%;background:#fff;border-radius:2px;transform-origin:bottom;animation:eqbar 1s ease-in-out infinite}
+.music-btn .bars i:nth-child(2){animation-delay:.25s}.music-btn .bars i:nth-child(3){animation-delay:.5s}.music-btn .bars i:nth-child(4){animation-delay:.75s}
+.music-btn.off .bars i{animation:none;transform:scaleY(.2);opacity:.6}
+.music-btn.off::after{content:"";position:absolute;width:30px;height:2px;background:#fff;transform:rotate(-45deg);border-radius:2px}
+@keyframes eqbar{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
